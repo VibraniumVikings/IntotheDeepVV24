@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Core.vvHardwareITD;
  * Also need the telemetry to read all sensor values
  */
 
-@TeleOp(name="vvArmLift", group="Concept")
+@TeleOp(name="vvArmLift", group="2-TeleOp")
 
 public class vvArmLift extends LinearOpMode {
 

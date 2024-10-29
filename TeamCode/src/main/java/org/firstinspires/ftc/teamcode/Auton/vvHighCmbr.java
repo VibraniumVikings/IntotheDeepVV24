@@ -16,16 +16,13 @@ import org.firstinspires.ftc.teamcode.Core.vvHardwareITDRR;
 import org.firstinspires.ftc.teamcode.Core.vvRoadRunnerDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.VisionPortal;
-//import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 import java.util.Objects;
 
-// Auton with 2 high chamber and park
-
     /*
-     * Auton Blue Sequence
-     * Start the robot on the x tile line against the wall
+     * Auton with 2 high chamber (one from wall) and park
+     * Start the robot left side on the x tile line against the wall
      *
      */
     @Autonomous(name = "vvHighCmbr", group = "2 - Auton", preselectTeleOp="vvTeleOp")
@@ -41,12 +38,12 @@ import java.util.Objects;
             vvRoadRunnerDrive vvdrive = new vvRoadRunnerDrive(hardwareMap);
 
             // We want to start the bot at x: 14, y: -60, heading: 90 degrees
-            Pose2d startPose = new Pose2d(-12, -65, Math.toRadians(90));
+            Pose2d startPose = new Pose2d(12, -65, Math.toRadians(90));
 
             vvdrive.setPoseEstimate(startPose);
 
             TrajectorySequence fwdHighChmbr = vvdrive.trajectorySequenceBuilder(startPose) //Also Red Back
-                    .forward(25)
+                    .forward(27)
                     .waitSeconds(0.5)
                     .build();
             TrajectorySequence sample1Pick  = vvdrive.trajectorySequenceBuilder(fwdHighChmbr.end())
@@ -114,7 +111,7 @@ import java.util.Objects;
                     robot.armPos(robot.armHighCa, robot.armEPower);
                     robot.moveWristHighCw();
                     robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
-                    sleep(500);
+                    sleep(100);
                     vvdrive.followTrajectorySequence(fwdHighChmbr);
                     sleep(500);
                     robot.armPos(robot.armHighCa-150,robot.armEPower );

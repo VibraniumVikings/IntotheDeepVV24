@@ -45,9 +45,9 @@ public class vvHardwareITDRR {
      * wrist variables: floorPick, highCw, lowCw, highBw, lowBw
      * claw variables: openClaw, closeClaw (Do we need to add one for length vs. width samples?)
      */
-    public static final double clawClose      =  1 ;
+    public static final double clawClose      =  1 ; //Metal 1,3D Print 0.9
     public static final double clawLong     =  0.8 ;
-    public static final double clawOpen       =  0.65 ;
+    public static final double clawOpen       =  0.65 ; //Metal 0.65, 3D Print 0.3
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = 0.45 ;
     public static final double floorPick = 0.1 ;
@@ -63,7 +63,7 @@ public class vvHardwareITDRR {
     final public int armHighCa = 1200; //
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
-    final public int armRearBa = 3000;
+    final public int armRearBa = 2900;
     final public int armFloorSub = 400;
     final public int armWall = 400;
     final public int armAscent = 2500;
@@ -73,7 +73,7 @@ public class vvHardwareITDRR {
     final public int extArmHighCe = 600;
     final public int extArmLowCe = 50;
     final public int extArmFloorSub= 1450;
-    final public int extArmFLoorPick = 200;
+    final public int extArmFLoorPick = 290;
     final public double extArmEPower = 0.4;
 
     static final double FORWARD_SPEED = 0.3;

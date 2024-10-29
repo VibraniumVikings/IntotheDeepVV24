@@ -42,7 +42,7 @@ public class  vvSnglBskt extends LinearOpMode {
         vvdrive.setPoseEstimate(startPose);
 
         TrajectorySequence fwdHighCmbr = vvdrive.trajectorySequenceBuilder(startPose) //Tile Start Position
-                .forward(25)
+                .forward(27)
                 .waitSeconds(0.5)
                 .build();
         TrajectorySequence yellow1 = vvdrive.trajectorySequenceBuilder(fwdHighCmbr.end())
@@ -111,11 +111,11 @@ public class  vvSnglBskt extends LinearOpMode {
                 telemetry.addData("Parallel Position: ", poseEstimate.getX());
                 telemetry.addData("Perpendicular Position: ", poseEstimate.getY());
                 telemetry.update();
-                robot.armPos(robot.armHighCa-100,robot.armEPower);
+                robot.armPos(robot.armHighCa-150,robot.armEPower);
                 robot.openClaw();
                 vvdrive.followTrajectorySequence(yellow1);
                 robot.armPos(robot.extArmFLoorPick,robot.armEPower);
-                sleep(1000);
+                sleep(500);
                 robot.closeClaw();
                 vvdrive.followTrajectorySequence(yellow1Drop);
                 robot.openClaw();

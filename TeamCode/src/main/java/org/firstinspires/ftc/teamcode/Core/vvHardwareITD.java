@@ -55,12 +55,12 @@ public class vvHardwareITD {
     * wrist variables: floorPick, highCw, lowCw, highBw, lowBw
     * claw variables: openClaw, closeClaw (Do we need to add one for length vs. width samples?)
     */
-    public static final double clawClose      =  1 ;
-    public static final double clawLong     =  0.8 ;
-    public static final double clawOpen       =  0.65 ;
+    public static final double clawClose      =  1 ; //Metal 13D Print 0.9
+    public static final double clawLong     =  0.8 ; //Metal 0.8 3D Print 0.5
+    public static final double clawOpen       =  0.65 ; //Metal 0.65 3D Print 0.3
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = 0.45 ;
-    public static final double floorPick = 0.1 ;
+    public static final double floorPick = 0.1 ; //Metal 0.1 3D Print 0.4
     public static final double floorCarry = 0.9 ;
     public static final double highCw  = 0.3 ;
     public static final double lowCW = 0.5 ;
@@ -68,28 +68,28 @@ public class vvHardwareITD {
     public static final double lowBw = 0.3 ;
     public static final double lowWallCw = 0.4 ;
 
-    final public int floorArm = 0;// -84
+    final public int floorArm = 0;// 0 for metal, ~50 for claw?
     final public int armLowCa = 550; //
     final public int armHighCa = 1200; //
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
-    final public int armRearBa = 3000;
-    final public int armFloorSub = 400;
+    final public int armRearBa = 3000; //Max arm is 3747, 2560 is vertical
+    final public int armFloorSub = 400; // 400 for metal, ~200 for claw?
     final public int armWall = 400;
     final public int armAscent = 1200;
     final public double armEPower = 0.5;
-    final public int extArmAscentGrab = 1450;
+    final public int extArmAscentGrab = 1450; //20" high is 1450
     final public int extArmAscentLift = 50;
-    final public int extArmHighBe = 2000;
+    final public int extArmHighBe = 2000; //Max is 2035, 36" to 47" reach, 13.5" fulcrum
     final public int extArmLowBe = 838;
     final public int extArmHighCe = 600;
     final public int extArmLowCe = 50;
     final public int extArmFloorSub= 1450;
-    final public int extArmFLoorPick = 290;
+    final public int extArmFLoorPick = 290; //Metal 290, 3D Print 400
     final public double extArmEPower = 0.4;
 
     final public double liftEPower = 0.5;
-    final public int liftHigh = 2000;
+    final public int liftHigh = 2000; //Max is 2200, 24"-32" height, 20"mid is 1100
     final public int liftLow = 50;
 
     static final double FORWARD_SPEED = 0.3;
