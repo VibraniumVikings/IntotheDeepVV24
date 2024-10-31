@@ -63,11 +63,11 @@ public class vvHardwareITDRR {
     final public int armHighCa = 1200; //
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
-    final public int armRearBa = 2900;
+    final public int armRearBa = 2600;
     final public int armFloorSub = 400;
     final public int armWall = 400;
-    final public int armAscent = 2500;
-    final public double armEPower = 0.5;
+    final public int armAscent = 1500;
+    final public double armEPower = 0.7;
     final public int extArmHighBe = 2000;
     final public int extArmLowBe = 838;
     final public int extArmHighCe = 600;

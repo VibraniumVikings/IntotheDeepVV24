@@ -73,12 +73,12 @@ public class vvHardwareITD {
     final public int armHighCa = 1200; //
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
-    final public int armRearBa = 3000; //Max arm is 3747, 2560 is vertical
+    final public int armRearBa = 2600; //Max arm is 3747, 2560 is vertical
     final public int armFloorSub = 400; // 400 for metal, ~200 for claw?
     final public int armWall = 400;
-    final public int armAscent = 1200;
-    final public double armEPower = 0.5;
-    final public int extArmAscentGrab = 1450; //20" high is 1450
+    final public int armAscent = 1500;
+    final public double armEPower = 0.7;
+    final public int extArmAscentGrab = 50; //20" high is 1450
     final public int extArmAscentLift = 50;
     final public int extArmHighBe = 2000; //Max is 2035, 36" to 47" reach, 13.5" fulcrum
     final public int extArmLowBe = 838;
@@ -175,10 +175,10 @@ public class vvHardwareITD {
 
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

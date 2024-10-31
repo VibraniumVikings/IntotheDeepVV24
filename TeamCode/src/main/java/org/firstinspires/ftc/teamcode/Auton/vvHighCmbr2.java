@@ -31,40 +31,23 @@ public class vvHighCmbr2 extends LinearOpMode {
         vvdrive.setPoseEstimate(startPose);
 
         TrajectorySequence fwdHighChmbr = vvdrive.trajectorySequenceBuilder(startPose) //Also Red Back
-                .forward(27)
+                .forward(25)
                 .waitSeconds(0.5)
                 .build();
         TrajectorySequence sample1Pick  = vvdrive.trajectorySequenceBuilder(fwdHighChmbr.end())
                 .back(6)
-                .turn(Math.toRadians(180))
-                .strafeLeft(83)
+                .strafeRight(70)
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    robot.armPos(robot.armWall, robot.armEPower);
-                    robot.moveWristWall();
-                    robot.extArmPos(50,robot.extArmEPower); })
-                .forward(10)
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.moveWristFloor();
+                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower); })
+                .forward(12)
                 .build();
         TrajectorySequence sample1drop = vvdrive.trajectorySequenceBuilder(sample1Pick.end())
-                .strafeRight(60)
-                .turn(Math.toRadians(180))
-                .forward (17)
-                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    robot.armPos(robot.armHighCa, robot.armEPower);
-                    robot.moveWristWall();
-                    robot.extArmPos(robot.extArmHighCe,robot.extArmEPower );
-                })
+                .turn(Math.toRadians(-180))
+                .forward (19)
                 .build();
-        TrajectorySequence sample2Pick = vvdrive.trajectorySequenceBuilder(sample1drop.end()) //Also Blue Back
-                .turn(Math.toRadians(180))
-                .strafeLeft(53)
-                .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
-                    robot.armPos(robot.armWall, robot.armEPower);
-                    robot.moveWristWall();
-                    robot.extArmPos(50,robot.extArmEPower);
-                })
-                .forward(10)
-                .build();
-        TrajectorySequence sample2Drop = vvdrive.trajectorySequenceBuilder(sample2Pick.end())
+       /* TrajectorySequence sample2Drop = vvdrive.trajectorySequenceBuilder(sample1.end())
                 .strafeRight(48)
                 .turn(Math.toRadians(180))
                 .forward (12  )
@@ -78,7 +61,7 @@ public class vvHighCmbr2 extends LinearOpMode {
                 .strafeLeft(48)
                 .back(24)
                 .build();
-
+*/
         robot.init();
 
         // Wait for the DS start button to be touched.
@@ -101,21 +84,19 @@ public class vvHighCmbr2 extends LinearOpMode {
                 robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
                 sleep(100);
                 vvdrive.followTrajectorySequence(fwdHighChmbr);
-                sleep(500);
+                sleep(250);
                 robot.armPos(robot.armHighCa-150,robot.armEPower );
-                sleep(100);
+                sleep(250);
                 robot.openClaw();
+                sleep(100);
                 vvdrive.followTrajectorySequence(sample1Pick);
                 sleep(100);
                 robot.closeClaw();
-                robot.armPos(robot.armWall+50,robot.armEPower );
+                sleep(100);
                 vvdrive.followTrajectorySequence(sample1drop);
-                sleep(500);
-                robot.armPos(robot.armHighCa-150,robot.armEPower );
-                sleep(100);
                 robot.openClaw();
+                sleep(500);
                 robot.armPos(0,robot.armEPower);
-                sleep(100);
                 robot.closeClaw();
                 robot.moveWristCarry();
                 robot.extArmPos(0,robot.extArmEPower);

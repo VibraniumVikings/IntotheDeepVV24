@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -81,7 +82,7 @@ public class vvTeleOp extends LinearOpMode {
                 if (gamepad1.dpad_right) { //arm ascent lift
                     robot.extArmPos(robot.extArmAscentLift,robot.extArmEPower+0.3);
                     robot.armPos(robot.armAscent, robot.armEPower);
-                    robot.moveWristCarry();
+                    robot.moveWristFloor();
                 }
                 if (gamepad1.dpad_up) { //lift to grab position
                     robot.liftUp();
@@ -92,7 +93,7 @@ public class vvTeleOp extends LinearOpMode {
                 if (gamepad1.x) { //wrist drop
                     robot.moveWristFloor();
                 }
-                if (gamepad1.b) { //floor pick
+                if (gamepad1.b) { //carry
                     robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower+0.3);
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.moveWristCarry();
@@ -116,9 +117,12 @@ public class vvTeleOp extends LinearOpMode {
                     robot.openClaw();
                 if (gamepad2.left_bumper)
                     robot.closeClaw();
-                if (gamepad2.x)
-                    robot.longClaw();
 
+                if (gamepad2.x) {
+                    robot.armPos(robot.armRearBa, robot.armEPower);
+                    robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
+                    robot.moveWristLowCW();
+                }
                 if (gamepad2.a) { //Near floor pick
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
@@ -157,10 +161,10 @@ public class vvTeleOp extends LinearOpMode {
                     robot.moveWristLowCW();
                 }
 
-                if (gamepad2.options) { //backward basket drop
-                    robot.armPos(robot.armRearBa, robot.armEPower);
-                    robot.extArmPos(robot.extArmHighBe,robot.extArmEPower);
-                    robot.moveWristHighBw();
+                if (gamepad2.start) { //arm extension reset
+                    robot.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    sleep(20);
+                    robot.extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
 
                 if (armBump>0.8) {

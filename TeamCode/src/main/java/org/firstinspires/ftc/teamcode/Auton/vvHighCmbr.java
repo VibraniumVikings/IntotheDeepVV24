@@ -87,6 +87,13 @@ import java.util.Objects;
                     })
                     .build();
             TrajectorySequence park = vvdrive.trajectorySequenceBuilder(sample2Drop.end())
+                    .back(12)
+                    .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
+                        robot.closeClaw();
+                        robot.armPos(0, robot.armEPower);
+                        robot.moveWristCarry();
+                        robot.extArmPos(0, robot.armEPower);
+                    })
                     .strafeLeft(48)
                     .back(24)
                     .build();
@@ -126,10 +133,8 @@ import java.util.Objects;
                     robot.armPos(robot.armHighCa-150,robot.armEPower );
                     sleep(100);
                     robot.openClaw();
-                    robot.armPos(0,robot.armEPower);
                     sleep(100);
-                    robot.closeClaw();
-                    robot.moveWristCarry();
+                    vvdrive.followTrajectorySequence(park);
                     robot.extArmPos(0,robot.extArmEPower);
                     robot.rgb.setPosition(0.29);
                     sleep(1000); //cutting due to time
