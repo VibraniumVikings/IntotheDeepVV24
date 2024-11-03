@@ -43,13 +43,13 @@ import java.util.Objects;
             vvdrive.setPoseEstimate(startPose);
 
             TrajectorySequence fwdHighChmbr = vvdrive.trajectorySequenceBuilder(startPose) //Also Red Back
-                    .forward(27)
+                    .forward(25)
                     .waitSeconds(0.5)
                     .build();
             TrajectorySequence sample1Pick  = vvdrive.trajectorySequenceBuilder(fwdHighChmbr.end())
                     .back(6)
                     .turn(Math.toRadians(180))
-                    .strafeLeft(83)
+                    .strafeLeft(78)
                     .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                         robot.armPos(robot.armWall, robot.armEPower);
                         robot.moveWristWall();
@@ -58,7 +58,7 @@ import java.util.Objects;
                     .build();
             TrajectorySequence sample1drop = vvdrive.trajectorySequenceBuilder(sample1Pick.end())
                     .strafeRight(60)
-                    .turn(Math.toRadians(180))
+                    .turn(Math.toRadians(-180))
                     .forward (17)
                     .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                         robot.armPos(robot.armHighCa, robot.armEPower);
@@ -121,7 +121,7 @@ import java.util.Objects;
                     sleep(100);
                     vvdrive.followTrajectorySequence(fwdHighChmbr);
                     sleep(500);
-                    robot.armPos(robot.armHighCa-150,robot.armEPower );
+                    robot.armPos(robot.armHighCa-150, 0.4);
                     sleep(100);
                     robot.openClaw();
                     vvdrive.followTrajectorySequence(sample1Pick);

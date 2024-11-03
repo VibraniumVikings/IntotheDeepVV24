@@ -4,9 +4,9 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -18,25 +18,30 @@ import java.util.List;
  * Pipeline 1 is our Neural Detector with "red", "blue", and "yellow"
  * Pipeline 2 is Color detection
  */
-@TeleOp(name = "LimeAprilTag", group = "Sensor")
+@TeleOp(name = "LimeNeural", group = "Sensor")
 
-public class vvLimeLight extends LinearOpMode {
+public class vvLimeNeural extends LinearOpMode {
 
     private Limelight3A limelight;
+    public Servo led;
 
     @Override
     public void runOpMode() throws InterruptedException
     {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        led = hardwareMap.get(Servo.class, "led");
 
         telemetry.setMsTransmissionInterval(11);
 
-        limelight.pipelineSwitch(0 );
+        limelight.pipelineSwitch(1 );
 
         /*
          * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
          */
         limelight.start();
+
+        led.scaleRange(0,1);
+        led.setPosition(0);
 
         telemetry.addData(">", "Robot Ready.  Press Play.");
         telemetry.update();

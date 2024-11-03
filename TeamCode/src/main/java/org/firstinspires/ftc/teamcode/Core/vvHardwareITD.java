@@ -40,6 +40,7 @@ public class vvHardwareITD {
     public Servo wrist;
     public Servo claw;
     public Servo rgb;
+    public Servo led;
 
     public IMU imu;
     public DcMotor parallelEncoder;
@@ -77,8 +78,8 @@ public class vvHardwareITD {
     final public int armFloorSub = 400; // 400 for metal, ~200 for claw?
     final public int armWall = 400;
     final public int armAscent = 1500;
-    final public double armEPower = 0.7;
-    final public int extArmAscentGrab = 50; //20" high is 1450
+    final public double armEPower = 0.5;
+    final public int extArmAscentGrab = 1450; //20" high is 1450
     final public int extArmAscentLift = 50;
     final public int extArmHighBe = 2000; //Max is 2035, 36" to 47" reach, 13.5" fulcrum
     final public int extArmLowBe = 838;
@@ -132,6 +133,7 @@ public class vvHardwareITD {
         claw = myOpMode.hardwareMap.get(Servo.class,"claw");
         wrist = myOpMode.hardwareMap.get(Servo.class,"wrist");
         rgb = myOpMode.hardwareMap.get(Servo.class,"rgb");
+        led = myOpMode.hardwareMap.get(Servo.class, "led");
 
         wrist.scaleRange(0,1);
         wrist.setDirection(Servo.Direction.FORWARD);
@@ -145,6 +147,10 @@ public class vvHardwareITD {
         rgb.setDirection(Servo.Direction.FORWARD);
         rgb.setPosition(0.7);
 
+        led.scaleRange(0,1);
+        led.setDirection(Servo.Direction.FORWARD);
+        led.setPosition(0);
+
         // Retrieve the IMU from the hardware map
         imu = myOpMode.hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -156,7 +162,7 @@ public class vvHardwareITD {
         // Now initialize the IMU with this mounting orientation
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        imu.resetYaw(); //reset the imu during initialization
+        //imu.resetYaw(); //reset the imu during initialization
 
         //Set the motor directions
         leftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -173,8 +179,8 @@ public class vvHardwareITD {
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -381,10 +387,12 @@ public class vvHardwareITD {
     public void openClaw() {
        claw.setPosition(clawOpen);
        rgb.setPosition(0.29);
+       led.setPosition(0.8);
     }
     public void closeClaw() {
         claw.setPosition(clawClose);
         rgb.setPosition(0.5);
+        led.setPosition(0);
     }
     public void longClaw() {
         claw.setPosition(clawLong);

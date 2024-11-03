@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Core.vvHardwareITD;
+import org.firstinspires.ftc.teamcode.Core.vvLimeColor;
 
 /**
  * ITD (into the deep) teleOp for test and shakedown
@@ -25,6 +26,7 @@ public class vvTeleOp extends LinearOpMode {
 
     //vvHardware class external pull
     vvHardwareITD   robot       = new vvHardwareITD(this);
+    //vvLimeColor limelight = new vvLimeColor(this);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -33,7 +35,7 @@ public class vvTeleOp extends LinearOpMode {
         double turn = 0;
         int x = 0;
         int y = 0;
-        double drivePower = 0.5; //global drive power level
+        double drivePower = 0.7; //global drive power level
         double armBump = 0;
         double extBump = 0;
         int armBumpInc = 50;
@@ -44,6 +46,7 @@ public class vvTeleOp extends LinearOpMode {
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
+        //limelight.init();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press Play.");
@@ -67,7 +70,7 @@ public class vvTeleOp extends LinearOpMode {
 
                 if (gamepad1.right_bumper) {
                     // button is transitioning to a pressed state. So increment drivePower by 0.1
-                    drivePower = Math.min(drivePower + 0.05,0.9);
+                    drivePower = Math.min(drivePower + 0.05,0.95);
                 }
                 else if (gamepad1.left_bumper) {
                     // button is transitioning to a pressed state. So increment drivePower by -0.1
@@ -86,15 +89,21 @@ public class vvTeleOp extends LinearOpMode {
                 }
                 if (gamepad1.dpad_up) { //lift to grab position
                     robot.liftUp();
+                    robot.armPos(robot.armLowCa, robot.armEPower);
+                    robot.extArmPos(robot.extArmLowCe, robot.extArmEPower);
+                    robot.moveWristLowCW();
                 }
                 if (gamepad1.dpad_down) { //lift to down position, for robot lift
                     robot.liftDown();
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
+                    robot.moveWristFloor();
                 }
                 if (gamepad1.x) { //wrist drop
                     robot.moveWristFloor();
                 }
                 if (gamepad1.b) { //carry
-                    robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower+0.3);
+                    robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.moveWristCarry();
                 }
@@ -115,10 +124,11 @@ public class vvTeleOp extends LinearOpMode {
 
                 if (gamepad2.right_bumper)
                     robot.openClaw();
+
                 if (gamepad2.left_bumper)
                     robot.closeClaw();
 
-                if (gamepad2.x) {
+                if (gamepad2.x) { //Rear high basket drop
                     robot.armPos(robot.armRearBa, robot.armEPower);
                     robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
                     robot.moveWristLowCW();
@@ -163,8 +173,14 @@ public class vvTeleOp extends LinearOpMode {
 
                 if (gamepad2.start) { //arm extension reset
                     robot.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    robot.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     sleep(20);
                     robot.extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    robot.closeClaw();
+                    robot.armPos(0, robot.armEPower);
+                    robot.extArmPos(0,robot.extArmEPower);
+                    robot.moveWristCarry();
                 }
 
                 if (armBump>0.8) {
@@ -183,6 +199,8 @@ public class vvTeleOp extends LinearOpMode {
                 // Retrieve Rotational Angles and Velocities
                 YawPitchRollAngles orientation = robot.imu.getRobotYawPitchRollAngles();
                 AngularVelocity angularVelocity = robot.imu.getRobotAngularVelocity(AngleUnit.DEGREES);
+
+
 
 // Adding telemetry readouts
                 telemetry.addData(">", "Robot Running");

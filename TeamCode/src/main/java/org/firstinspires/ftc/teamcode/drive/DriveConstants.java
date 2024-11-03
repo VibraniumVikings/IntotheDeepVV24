@@ -90,9 +90,9 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
      
      */
-    public static double MAX_VEL = 32 ; //26.295 51.1394
+    public static double MAX_VEL = 32 ; //26.295 51.1394 Kraken 82.3496 (rec 65.88)
     public static double MAX_ACCEL = 32 ; //52.48180821614297 51.1394
-    public static double MAX_ANG_VEL = Math.toRadians(128.6489); //141.64
+    public static double MAX_ANG_VEL = Math.toRadians(128.6489); //141.64 Kraken 336.4329 (rec 269.15)
     public static double MAX_ANG_ACCEL = Math.toRadians(184.02607784577722);
 
     //public static String LOGO_FACING_DIR = "LEFT";

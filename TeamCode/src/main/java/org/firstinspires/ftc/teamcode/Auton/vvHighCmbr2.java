@@ -36,12 +36,12 @@ public class vvHighCmbr2 extends LinearOpMode {
                 .build();
         TrajectorySequence sample1Pick  = vvdrive.trajectorySequenceBuilder(fwdHighChmbr.end())
                 .back(6)
-                .strafeRight(70)
+                .strafeRight(68)
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.moveWristFloor();
                     robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower); })
-                .forward(12)
+                .forward(20)
                 .build();
         TrajectorySequence sample1drop = vvdrive.trajectorySequenceBuilder(sample1Pick.end())
                 .turn(Math.toRadians(-180))
@@ -82,11 +82,11 @@ public class vvHighCmbr2 extends LinearOpMode {
                 robot.armPos(robot.armHighCa, robot.armEPower);
                 robot.moveWristHighCw();
                 robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
-                sleep(100);
+                sleep(2000);
                 vvdrive.followTrajectorySequence(fwdHighChmbr);
                 sleep(250);
-                robot.armPos(robot.armHighCa-150,robot.armEPower );
-                sleep(250);
+                robot.armPos(robot.armHighCa-150,0.5);
+                sleep(500);
                 robot.openClaw();
                 sleep(100);
                 vvdrive.followTrajectorySequence(sample1Pick);
@@ -96,10 +96,10 @@ public class vvHighCmbr2 extends LinearOpMode {
                 vvdrive.followTrajectorySequence(sample1drop);
                 robot.openClaw();
                 sleep(500);
-                robot.armPos(0,robot.armEPower);
-                robot.closeClaw();
-                robot.moveWristCarry();
                 robot.extArmPos(0,robot.extArmEPower);
+                robot.closeClaw();
+                robot.armPos(0,robot.armEPower);
+                robot.moveWristCarry();
                 robot.rgb.setPosition(0.29);
                 sleep(1000); //cutting due to time
                 //vvdrive.followTrajectorySequence(sample2Pick);

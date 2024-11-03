@@ -27,9 +27,12 @@ public class vvHardwareITDRR {
     public DcMotorEx leftRear;
     public DcMotorEx arm;
     public DcMotorEx extend;
+    public DcMotorEx leftLift;
+    public DcMotorEx rightLift;
     public Servo wrist;
     public Servo claw;
     public Servo rgb;
+    public Servo led;
 
     public IMU imu;
     public DcMotor parallelEncoder;
@@ -67,7 +70,7 @@ public class vvHardwareITDRR {
     final public int armFloorSub = 400;
     final public int armWall = 400;
     final public int armAscent = 1500;
-    final public double armEPower = 0.7;
+    final public double armEPower = 0.5;
     final public int extArmHighBe = 2000;
     final public int extArmLowBe = 838;
     final public int extArmHighCe = 600;
@@ -75,6 +78,10 @@ public class vvHardwareITDRR {
     final public int extArmFloorSub= 1450;
     final public int extArmFLoorPick = 290;
     final public double extArmEPower = 0.4;
+
+    final public double liftEPower = 0.5;
+    final public int liftHigh = 2000; //Max is 2200, 24"-32" height, 20"mid is 1100
+    final public int liftLow = 50;
 
     static final double FORWARD_SPEED = 0.3;
     static final double TURN_SPEED = 0.5;
@@ -100,6 +107,8 @@ public class vvHardwareITDRR {
 
         extend = myOpMode.hardwareMap.get(DcMotorEx.class, "extend");
         arm = myOpMode.hardwareMap.get(DcMotorEx.class, "arm");
+        leftLift = myOpMode.hardwareMap.get(DcMotorEx.class, "ltLift");
+        rightLift = myOpMode.hardwareMap.get(DcMotorEx.class, "rtLift");
 
         //Shadow the motors with encoder-odometry
         //parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront"));
@@ -111,6 +120,7 @@ public class vvHardwareITDRR {
         claw = myOpMode.hardwareMap.get(Servo.class,"claw");
         wrist = myOpMode.hardwareMap.get(Servo.class,"wrist");
         rgb = myOpMode.hardwareMap.get(Servo.class,"rgb");
+        led = myOpMode.hardwareMap.get(Servo.class, "led");
 
         wrist.scaleRange(0,1);
         wrist.setDirection(Servo.Direction.FORWARD);
@@ -124,19 +134,31 @@ public class vvHardwareITDRR {
         rgb.setDirection(Servo.Direction.FORWARD);
         rgb.setPosition(0.7);
 
+        led.scaleRange(0,1);
+        led.setDirection(Servo.Direction.FORWARD);
+        led.setPosition(0);
+
         //Set the motor directions
 
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
         extend.setDirection(DcMotor.Direction.REVERSE);
+        leftLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLift.setDirection(DcMotor.Direction.FORWARD);
 
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.addData("Claw", claw.getPosition());
@@ -172,6 +194,22 @@ public class vvHardwareITDRR {
         extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         extend.setPower(extArmEPower);
     }
+    public void liftUp() {
+        leftLift.setTargetPosition(liftHigh);
+        rightLift.setTargetPosition(liftHigh);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLift.setPower(liftEPower);
+        rightLift.setPower(liftEPower);
+    }
+    public void liftDown() {
+        leftLift.setTargetPosition(liftLow);
+        rightLift.setTargetPosition(liftLow);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLift.setPower(liftEPower);
+        rightLift.setPower(liftEPower);
+    }
     public void moveWristFloor() {
         wrist.setPosition(floorPick);
     }
@@ -198,9 +236,13 @@ public class vvHardwareITDRR {
      */
     public void openClaw() {
         claw.setPosition(clawOpen);
+        rgb.setPosition(0.29);
+        led.setPosition(0.8);
     }
     public void closeClaw() {
         claw.setPosition(clawClose);
+        rgb.setPosition(0.5);
+        led.setPosition(0);
     }
 
 }
