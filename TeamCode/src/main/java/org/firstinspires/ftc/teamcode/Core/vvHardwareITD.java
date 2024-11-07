@@ -76,7 +76,7 @@ public class vvHardwareITD {
     final public int armHighBa = 2159;
     final public int armRearBa = 2600; //Max arm is 3747, 2560 is vertical
     final public int armFloorSub = 400; // 400 for metal, ~200 for claw?
-    final public int armWall = 400;
+    final public int armWall = 300;
     final public int armAscent = 1500;
     final public double armEPower = 0.5;
     final public int extArmAscentGrab = 1450; //20" high is 1450
@@ -147,9 +147,9 @@ public class vvHardwareITD {
         rgb.setDirection(Servo.Direction.FORWARD);
         rgb.setPosition(0.7);
 
-        led.scaleRange(0,1);
+        led.scaleRange(0,0.5);
         led.setDirection(Servo.Direction.FORWARD);
-        led.setPosition(0);
+        led.setPosition(0.5);
 
         // Retrieve the IMU from the hardware map
         imu = myOpMode.hardwareMap.get(IMU.class, "imu");

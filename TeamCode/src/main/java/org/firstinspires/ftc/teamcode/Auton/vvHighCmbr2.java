@@ -32,7 +32,7 @@ public class vvHighCmbr2 extends LinearOpMode {
 
         TrajectorySequence fwdHighChmbr = vvdrive.trajectorySequenceBuilder(startPose) //Also Red Back
                 .forward(25)
-                .waitSeconds(0.5)
+                .waitSeconds(0)
                 .build();
         TrajectorySequence sample1Pick  = vvdrive.trajectorySequenceBuilder(fwdHighChmbr.end())
                 .back(6)
@@ -82,10 +82,10 @@ public class vvHighCmbr2 extends LinearOpMode {
                 robot.armPos(robot.armHighCa, robot.armEPower);
                 robot.moveWristHighCw();
                 robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
-                sleep(2000);
+                sleep(100);
                 vvdrive.followTrajectorySequence(fwdHighChmbr);
                 sleep(250);
-                robot.armPos(robot.armHighCa-150,0.5);
+                robot.armPos(robot.armHighCa-150,0.4);
                 sleep(500);
                 robot.openClaw();
                 sleep(100);

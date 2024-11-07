@@ -22,7 +22,7 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 537.5;
+    public static final double TICKS_PER_REV = 800; //
     public static final double MAX_RPM = 435;
 
     /*
@@ -45,9 +45,9 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 0.94488; // in 1.88976
+    public static double WHEEL_RADIUS = 1.889764; // in  0.94488
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 9.38; // in
+    public static double TRACK_WIDTH = 14.25; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -55,7 +55,7 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.018; //1 / rpmToVelocity(MAX_RPM); 0.018
+    public static double kV = 0.012; //1 / rpmToVelocity(MAX_RPM); 0.018
     public static double kA = 0.0028; //.0007; //0.00047 0.0002
     public static double kStatic = 0.0025; //.25541; //0.26113
     //Testing on 28Nov kV = 0.01121/0.01905/0.25162, kStatic = 0.35475 (R^2 = 0.00), kA = 0.00054 (R^2 = 0.00)
@@ -90,10 +90,10 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
      
      */
-    public static double MAX_VEL = 32 ; //26.295 51.1394 Kraken 82.3496 (rec 65.88)
-    public static double MAX_ACCEL = 32 ; //52.48180821614297 51.1394
-    public static double MAX_ANG_VEL = Math.toRadians(128.6489); //141.64 Kraken 336.4329 (rec 269.15)
-    public static double MAX_ANG_ACCEL = Math.toRadians(184.02607784577722);
+    public static double MAX_VEL = 86.0845 ; //26.295 51.1394 Kraken 82.3496 (rec 65.88) 32=old
+    public static double MAX_ACCEL = 30 ; //52.48180821614297 51.1394 32=old
+    public static double MAX_ANG_VEL = Math.toRadians(180); //141.64 Kraken 336.4329 (rec 269.15) old=128.6489
+    public static double MAX_ANG_ACCEL = Math.toRadians(180); // 184.02607784577722=old
 
     //public static String LOGO_FACING_DIR = "LEFT";
 
