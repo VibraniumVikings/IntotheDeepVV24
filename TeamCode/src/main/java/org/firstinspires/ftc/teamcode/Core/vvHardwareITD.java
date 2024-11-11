@@ -179,8 +179,8 @@ public class vvHardwareITD {
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

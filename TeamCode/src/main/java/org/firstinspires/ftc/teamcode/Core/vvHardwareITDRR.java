@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.Core;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -85,6 +86,8 @@ public class vvHardwareITDRR {
 
     static final double FORWARD_SPEED = 0.3;
     static final double TURN_SPEED = 0.5;
+    final public int hcv = 20;
+    final public int hca = 20;
     public static double WHEEL_DIAMETER = 1.88976; // in
     public static final double TICKS_PER_REV = 2000;
     public double encTicksPerInches = TICKS_PER_REV/(WHEEL_DIAMETER*Math.PI);

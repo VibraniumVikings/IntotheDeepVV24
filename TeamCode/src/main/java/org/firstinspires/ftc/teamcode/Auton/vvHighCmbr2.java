@@ -31,21 +31,21 @@ public class vvHighCmbr2 extends LinearOpMode {
         vvdrive.setPoseEstimate(startPose);
 
         TrajectorySequence fwdHighChmbr = vvdrive.trajectorySequenceBuilder(startPose) //Also Red Back
-                .forward(25)
+                .forward(31)
                 .waitSeconds(0)
                 .build();
         TrajectorySequence sample1Pick  = vvdrive.trajectorySequenceBuilder(fwdHighChmbr.end())
                 .back(6)
-                .strafeRight(68)
+                .strafeRight(88)
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.moveWristFloor();
                     robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower); })
-                .forward(20)
+                .forward(9)
                 .build();
         TrajectorySequence sample1drop = vvdrive.trajectorySequenceBuilder(sample1Pick.end())
                 .turn(Math.toRadians(-180))
-                .forward (19)
+                .forward (29)
                 .build();
        /* TrajectorySequence sample2Drop = vvdrive.trajectorySequenceBuilder(sample1.end())
                 .strafeRight(48)
@@ -76,18 +76,17 @@ public class vvHighCmbr2 extends LinearOpMode {
                 vvdrive.update();
 
                 robot.rgb.setPosition(0.5);
+                robot.armPos(robot.armHighCa+100, robot.armEPower);
+                robot.moveWristHighCw();
+                vvdrive.followTrajectorySequence(fwdHighChmbr);
+                sleep(200);
                 telemetry.addData("Parallel Position: ", poseEstimate.getX());
                 telemetry.addData("Perpendicular Position: ", poseEstimate.getY());
                 telemetry.update();
-                robot.armPos(robot.armHighCa, robot.armEPower);
-                robot.moveWristHighCw();
-                robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
-                sleep(100);
-                vvdrive.followTrajectorySequence(fwdHighChmbr);
-                sleep(250);
-                robot.armPos(robot.armHighCa-150,0.4);
-                sleep(500);
+                robot.armPos(robot.armHighCa-250,0.4);
+                sleep(350);
                 robot.openClaw();
+                sleep(100);
                 sleep(100);
                 vvdrive.followTrajectorySequence(sample1Pick);
                 sleep(100);
