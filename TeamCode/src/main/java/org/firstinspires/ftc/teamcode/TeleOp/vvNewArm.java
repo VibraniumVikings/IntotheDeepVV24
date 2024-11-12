@@ -2,16 +2,12 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Core.vvHardwareITD;
-import org.firstinspires.ftc.teamcode.Core.vvLimeColor;
 
 /**
  * ITD (into the deep) teleOp for test and shakedown
@@ -20,9 +16,9 @@ import org.firstinspires.ftc.teamcode.Core.vvLimeColor;
  * Also need the telemetry to read all sensor values
  */
 
-@TeleOp(name="vvTeleOp", group="1-TeleOp")
+@TeleOp(name="vvNewArm", group="2-TeleOp")
 
-public class vvTeleOp extends LinearOpMode {
+public class vvNewArm extends LinearOpMode {
 
     //vvHardware class external pull
     vvHardwareITD   robot       = new vvHardwareITD(this);
@@ -93,15 +89,15 @@ public class vvTeleOp extends LinearOpMode {
                 }
                 if (gamepad1.dpad_up) { //lift to grab position
                     robot.liftUp();
-                    robot.armPos(robot.armLowCa, robot.armEPower);
-                    robot.extArmPos(robot.extArmLowCe, robot.extArmEPower);
-                    robot.moveWristLowCW();
+                    //robot.armPos(robot.armLowCa, robot.armEPower);
+                    //robot.extArmPos(robot.extArmLowCe, robot.extArmEPower);
+                    //robot.moveWristLowCW();
                 }
                 if (gamepad1.dpad_down) { //lift to down position, for robot lift
                     robot.liftDown();
-                    robot.armPos(robot.floorArm, robot.armEPower);
-                    robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
-                    robot.moveWristFloor();
+                    //robot.armPos(robot.floorArm, robot.armEPower);
+                    //robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
+                    //robot.moveWristFloor();
                 }
                 if (gamepad1.x) { //wrist drop
                     robot.moveWristFloor();
@@ -132,23 +128,37 @@ public class vvTeleOp extends LinearOpMode {
                 if (gamepad2.left_bumper)
                     robot.closeClaw();
 
-                if (gamepad2.x) { //Rear high basket drop
+                /*if (gamepad2.x) { //Rear high basket drop
                     robot.armPos(robot.armRearBa, robot.armEPower);
                     robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
                     robot.moveWristLowCW();
+                }*/
+                if (gamepad2.x) { //Chamber clip
+                    robot.armPos(robot.armHighCa-150, robot.armEPower);
+                    sleep(250);
+                    robot.openClaw();
                 }
-                if (gamepad2.a) { //Near floor pick
+                if (gamepad2.y) { //Carry position
                     robot.armPos(robot.floorArm, robot.armEPower);
-                    robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
+                    robot.extArmPos(50, robot.extArmEPower);
+                    robot.moveWristCarry();
+                }
+                if (gamepad2.a) { //intermediate pick
+                    robot.armPos(200, robot.armEPower);
                     robot.moveWristFloor();
+                    robot.extArmPos(580, robot.extArmEPower);
                 }
                 if (gamepad2.b) { //Wall pick
                     robot.armPos(robot.armWall, robot.armEPower);
                     robot.extArmPos(robot.extArmLowCe,robot.extArmEPower);
                     robot.moveWristWall();
                 }
-
-                if (gamepad2.y) { //Submersible pick
+                if (gamepad2.dpad_down) { //Near floor pick
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
+                    robot.moveWristFloor();
+                }
+                if (gamepad2.dpad_right) { //Submersible pick
                     robot.armPos(robot.armFloorSub, robot.armEPower);
                     robot.moveWristFloor();
                     robot.extArmPos(robot.extArmFloorSub, robot.extArmEPower);
@@ -159,21 +169,21 @@ public class vvTeleOp extends LinearOpMode {
                     robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
                     robot.moveWristHighBw();
                 }
-                if (gamepad2.dpad_right) { //Low Basket
+                /*if (gamepad2.dpad_right) { //Low Basket
                     robot.armPos(robot.armLowBa, robot.armEPower);
                     robot.extArmPos(robot.extArmLowBe, robot.extArmEPower);
                     robot.moveWristLowBw();
-                }
+                }*/
                 if (gamepad2.dpad_left) { //High Chamber
                     robot.armPos(robot.armHighCa, robot.armEPower);
                     robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
                     robot.moveWristHighCw();
                 }
-                if (gamepad2.dpad_down) { //Low Chamber
+                /*if (gamepad2.dpad_down) { //Low Chamber
                     robot.armPos(robot.armLowCa, robot.armEPower);
                     robot.extArmPos(robot.extArmLowCe, robot.extArmEPower);
                     robot.moveWristLowCW();
-                }
+                }*/
 
                 if (gamepad2.start) { //arm extension reset
                     robot.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -188,7 +198,7 @@ public class vvTeleOp extends LinearOpMode {
                 }
 
                 if (armBump>0.8) {
-                    robot.armPos(armLoc + armBumpInc,robot.armEPower);
+                    robot.armPos(armLoc+armBumpInc,robot.armEPower);
                 }
                 if (armBump<-0.8) {
                     robot.armPos(armLoc-armBumpInc,robot.armEPower);
@@ -212,8 +222,8 @@ public class vvTeleOp extends LinearOpMode {
                 //telemetry.addData("Y", driveY);
                 //telemetry.addData("strafe", strafe);
                 //telemetry.addData("turn", turn);
-                telemetry.addData("Y Encoder",y);
-                telemetry.addData("X Encoder",x);
+                telemetry.addData("Y Encoder",((2.05*2*Math.PI*y)/2000));
+                telemetry.addData("X Encoder",((2.05*2*Math.PI*x)/2000));
                 telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
                 telemetry.addData("Arm Position", robot.arm.getCurrentPosition());
                 telemetry.addData("Extend Position", robot.extend.getCurrentPosition());

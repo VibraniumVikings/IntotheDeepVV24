@@ -147,7 +147,7 @@ public class vvHardwareITD {
         rgb.setDirection(Servo.Direction.FORWARD);
         rgb.setPosition(0.7);
 
-        led.scaleRange(0,0.5);
+        led.scaleRange(0,1);
         led.setDirection(Servo.Direction.FORWARD);
         led.setPosition(0.5);
 
@@ -397,6 +397,7 @@ public class vvHardwareITD {
     public void longClaw() {
         claw.setPosition(clawLong);
         rgb.setPosition(0.388);
+        led.setPosition(0);
     }
 
 }
