@@ -133,9 +133,9 @@ public class vvTeleOp extends LinearOpMode {
                     robot.closeClaw();
 
                 if (gamepad2.x) { //Rear high basket drop
-                    robot.armPos(robot.armRearBa, robot.armEPower);
-                    robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
-                    robot.moveWristLowCW();
+                    robot.armPos(robot.armHighCa-150, robot.armEPower);
+                    sleep(350);
+                    robot.openClaw();
                 }
                 if (gamepad2.a) { //Near floor pick
                     robot.armPos(robot.floorArm, robot.armEPower);

@@ -135,7 +135,7 @@ public class vvNewArm extends LinearOpMode {
                 }*/
                 if (gamepad2.x) { //Chamber clip
                     robot.armPos(robot.armHighCa-150, robot.armEPower);
-                    sleep(250);
+                    sleep(350);
                     robot.openClaw();
                 }
                 if (gamepad2.y) { //Carry position
@@ -222,8 +222,8 @@ public class vvNewArm extends LinearOpMode {
                 //telemetry.addData("Y", driveY);
                 //telemetry.addData("strafe", strafe);
                 //telemetry.addData("turn", turn);
-                telemetry.addData("Y Encoder",((2.05*2*Math.PI*y)/2000));
-                telemetry.addData("X Encoder",((2.05*2*Math.PI*x)/2000));
+                telemetry.addData("Y Encoder",((0.944882*2*Math.PI*y)/2000));
+                telemetry.addData("X Encoder",((0.944882*2*Math.PI*x)/2000));
                 telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
                 telemetry.addData("Arm Position", robot.arm.getCurrentPosition());
                 telemetry.addData("Extend Position", robot.extend.getCurrentPosition());

@@ -64,7 +64,7 @@ public class vvHardwareITDRR {
 
     final public int floorArm = 0;// -84
     final public int armLowCa = 550; //
-    final public int armHighCa = 1200; //
+    final public int armHighCa = 1250; //was 1200
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
     final public int armRearBa = 2600;
@@ -88,6 +88,8 @@ public class vvHardwareITDRR {
     static final double TURN_SPEED = 0.5;
     final public int hcv = 20;
     final public int hca = 20;
+    final public int hspdv = 60;
+    final public int hspda = 60;
     public static double WHEEL_DIAMETER = 1.88976; // in
     public static final double TICKS_PER_REV = 2000;
     public double encTicksPerInches = TICKS_PER_REV/(WHEEL_DIAMETER*Math.PI);

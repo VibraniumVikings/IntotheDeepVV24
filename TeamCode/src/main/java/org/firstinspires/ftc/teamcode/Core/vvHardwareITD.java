@@ -71,7 +71,7 @@ public class vvHardwareITD {
 
     final public int floorArm = 0;// 0 for metal, ~50 for claw?
     final public int armLowCa = 550; //
-    final public int armHighCa = 1200; //
+    final public int armHighCa = 1250; //was 1200
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
     final public int armRearBa = 2600; //Max arm is 3747, 2560 is vertical
@@ -392,7 +392,7 @@ public class vvHardwareITD {
     public void closeClaw() {
         claw.setPosition(clawClose);
         rgb.setPosition(0.5);
-        led.setPosition(0);
+        led.setPosition(0.1);
     }
     public void longClaw() {
         claw.setPosition(clawLong);

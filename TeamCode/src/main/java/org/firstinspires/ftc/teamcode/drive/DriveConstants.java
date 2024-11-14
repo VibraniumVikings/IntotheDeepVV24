@@ -90,10 +90,10 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
      
      */
-    public static double MAX_VEL = 40 ; //26.295 51.1394 Kraken 82.3496 (rec 65.88)
-    public static double MAX_ACCEL = 40 ; //52.48180821614297 51.1394
-    public static double MAX_ANG_VEL = 3; // 2.356 5.77 128.6489 141.64 Kraken 336.4329 (rec 269.15)
-    public static double MAX_ANG_ACCEL = 3; // 184.02607784577722
+    public static double MAX_VEL = 44 ; //26.295 51.1394 Kraken 82.3496 (rec 65.88)
+    public static double MAX_ACCEL = 44 ; //52.48180821614297 51.1394
+    public static double MAX_ANG_VEL = 3.3; // 2.356 5.77 128.6489 141.64 Kraken 336.4329 (rec 269.15)
+    public static double MAX_ANG_ACCEL = 3.3; // 184.02607784577722
 
     //public static String LOGO_FACING_DIR = "LEFT";
 
