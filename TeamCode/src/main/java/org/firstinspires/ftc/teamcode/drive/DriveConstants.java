@@ -55,7 +55,7 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.011; //1 / rpmToVelocity(MAX_RPM); 0.018
+    public static double kV = 0.011; //1 / rpmToVelocity(MAX_RPM); 0.018 0.012
     public static double kA = 0.003; //.0007; //0.00047 0.0002
     public static double kStatic = 0.085; //.25541; //0.26113
     //Testing on 28Nov kV = 0.01121/0.01905/0.25162, kStatic = 0.35475 (R^2 = 0.00), kA = 0.00054 (R^2 = 0.00)
@@ -90,8 +90,8 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
      
      */
-    public static double MAX_VEL = 44 ; //26.295 51.1394 Kraken 82.3496 (rec 65.88)
-    public static double MAX_ACCEL = 44 ; //52.48180821614297 51.1394
+    public static double MAX_VEL = 46 ; //26.295 51.1394 Kraken 82.3496 (rec 65.88)
+    public static double MAX_ACCEL = 46 ; //52.48180821614297 51.1394
     public static double MAX_ANG_VEL = 3.3; // 2.356 5.77 128.6489 141.64 Kraken 336.4329 (rec 269.15)
     public static double MAX_ANG_ACCEL = 3.3; // 184.02607784577722
 

@@ -58,45 +58,46 @@ public class vvChamber extends LinearOpMode {
                     robot.closeClaw();
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.moveWristCarry();
-                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower); })
+                    robot.extArmPos(robot.extArmFLoorPick-25, robot.extArmEPower); })
                 .lineTo(new Vector2d(86,-10))
-                .lineTo(new Vector2d(112,-10))
-                .lineTo(new Vector2d(130,-50))
-                .lineTo(new Vector2d(151,-30))
+                .lineTo(new Vector2d(111,-10))
+                .lineTo(new Vector2d(126,-50))
+                .lineTo(new Vector2d(152,-30))
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     robot.moveWristFloor();
                     robot.openClaw();
                     })
-                .forward(5)
+                .forward(7)
                 .waitSeconds(0)
                 .build();
         TrajectorySequence sample2 = vvdrive.trajectorySequenceBuilder(sample1.end())
                 .resetConstraints()
-                .turn(Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(136,-52,Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(135,-48,Math.toRadians(225)))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     robot.armPos(robot.armWall, robot.armEPower);
                     robot.moveWristWall();
                     robot.extArmPos(robot.extArmLowCe, robot.extArmEPower); })
-                .forward (7)
-                .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
+                .turn(Math.toRadians(45))
+                .forward (13)
+                .UNSTABLE_addTemporalMarkerOffset(-0.75, () -> {
                     robot.openClaw();
                 })
                 .waitSeconds(0)
                 .build();
         TrajectorySequence sample1Place = vvdrive.trajectorySequenceBuilder(sample2.end())
+                .back(6)
                 .turn(Math.toRadians(-90))
-                .lineToLinearHeading(new Pose2d(66,-32,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(70,-46,Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
-                    robot.armPos(robot.armHighCa+100, robot.armEPower);
+                    robot.armPos(robot.armHighCa, robot.armEPower);
                     robot.moveWristHighCw();
                     robot.extArmPos(robot.extArmHighCe,robot.extArmEPower );
                 })
-                .forward(5)
                 .waitSeconds(0)
                 .build();
         TrajectorySequence park = vvdrive.trajectorySequenceBuilder(sample1Place.end())
-                .lineToLinearHeading(new Pose2d(48,-52,Math.toRadians(0)))
+                //.lineToLinearHeading(new Pose2d(120,-52,Math.toRadians(0)))
+                .lineTo(new Vector2d(120,-55))
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     robot.closeClaw();
                     robot.armPos(robot.floorArm, robot.armEPower);
@@ -131,15 +132,15 @@ public class vvChamber extends LinearOpMode {
                 robot.openClaw();
                 sleep(100);
                 vvdrive.followTrajectorySequence(sample1);
-                sleep(100);
+                sleep(50);
                 robot.closeClaw();
-                sleep(100);
+                sleep(50);
                 vvdrive.followTrajectorySequence(sample2);
-                sleep(100);
+                sleep(50);
                 robot.closeClaw();
-                sleep(100);
+                sleep(50);
                 vvdrive.followTrajectorySequence(sample1Place);
-                sleep(200);
+                sleep(100);
                 robot.armPos(robot.armHighCa-250,0.4);
                 sleep(350);
                 robot.openClaw();
