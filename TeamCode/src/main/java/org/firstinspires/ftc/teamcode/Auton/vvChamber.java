@@ -56,29 +56,30 @@ public class vvChamber extends LinearOpMode {
                 .lineTo(new Vector2d(66,-36))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     robot.closeClaw();
+                    robot.extArmPos(robot.extArmFLoorPick+50, robot.extArmEPower);
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.moveWristCarry();
-                    robot.extArmPos(robot.extArmFLoorPick-25, robot.extArmEPower); })
-                .lineTo(new Vector2d(86,-10))
+                     })
+                .lineTo(new Vector2d(85,-10))
                 .lineTo(new Vector2d(111,-10))
-                .lineTo(new Vector2d(126,-50))
-                .lineTo(new Vector2d(152,-30))
+                .lineTo(new Vector2d(124,-50))
+                .lineTo(new Vector2d(150,-33))
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     robot.moveWristFloor();
                     robot.openClaw();
                     })
-                .forward(7)
-                .waitSeconds(0)
+                .forward(6)
+                .waitSeconds(0.25)
                 .build();
         TrajectorySequence sample2 = vvdrive.trajectorySequenceBuilder(sample1.end())
                 .resetConstraints()
-                .lineToLinearHeading(new Pose2d(135,-48,Math.toRadians(225)))
-                .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
+                .lineToLinearHeading(new Pose2d(135,-43,Math.toRadians(225)))
+                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     robot.armPos(robot.armWall, robot.armEPower);
                     robot.moveWristWall();
                     robot.extArmPos(robot.extArmLowCe, robot.extArmEPower); })
                 .turn(Math.toRadians(45))
-                .forward (13)
+                .forward (16)
                 .UNSTABLE_addTemporalMarkerOffset(-0.75, () -> {
                     robot.openClaw();
                 })
@@ -87,7 +88,7 @@ public class vvChamber extends LinearOpMode {
         TrajectorySequence sample1Place = vvdrive.trajectorySequenceBuilder(sample2.end())
                 .back(6)
                 .turn(Math.toRadians(-90))
-                .lineToLinearHeading(new Pose2d(70,-46,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(70,-45,Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     robot.armPos(robot.armHighCa, robot.armEPower);
                     robot.moveWristHighCw();
@@ -136,7 +137,7 @@ public class vvChamber extends LinearOpMode {
                 robot.closeClaw();
                 sleep(50);
                 vvdrive.followTrajectorySequence(sample2);
-                sleep(50);
+                sleep(100);
                 robot.closeClaw();
                 sleep(50);
                 vvdrive.followTrajectorySequence(sample1Place);

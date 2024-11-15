@@ -57,7 +57,7 @@ public class vvBasket extends LinearOpMode {
                 .forward(5)
                 .build();
         TrajectorySequence yellow1Drop = vvdrive.trajectorySequenceBuilder(yellow1.end())
-                .lineTo(new Vector2d(-120,-64))
+                .lineTo(new Vector2d(-119,-60))
                 //.lineToLinearHeading(new Pose2d(-106,-65,Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     robot.armPos(robot.armRearBa, robot.armEPower); //
@@ -70,7 +70,7 @@ public class vvBasket extends LinearOpMode {
         TrajectorySequence yellow2 = vvdrive.trajectorySequenceBuilder(yellow1Drop.end())
                 //.turn(Math.toRadians(60))
                 //.lineTo(new Vector2d(-105,-45))
-                .lineToLinearHeading(new Pose2d(-105,-46,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-102,-49,Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     robot.moveWristFloor();
                     robot.armPos(robot.floorArm, robot.armEPower);
@@ -80,7 +80,7 @@ public class vvBasket extends LinearOpMode {
                 .waitSeconds(0)
                 .build();
         TrajectorySequence yellow2Drop = vvdrive.trajectorySequenceBuilder(yellow2.end())
-                .lineTo(new Vector2d(-122,-58)) //120
+                .lineTo(new Vector2d(-121,-59)) //120
                 //.lineToLinearHeading(new Pose2d(-106,-65,Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(-4, () -> {
                     robot.armPos(robot.armRearBa, robot.armEPower);
@@ -91,21 +91,21 @@ public class vvBasket extends LinearOpMode {
                 .waitSeconds(0.5)
                 .build();
         TrajectorySequence yellow3 = vvdrive.trajectorySequenceBuilder(yellow2Drop.end())
-                .lineTo(new Vector2d(-98,-54)) //96 47
+                .lineTo(new Vector2d(-98,-60)) //96 47
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     robot.moveWristHighBw();
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(robot.extArmFLoorPick, robot.armEPower);
                     robot.openClaw();
                 })
-                .lineToLinearHeading(new Pose2d(-95,-18,Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-95,-23,Math.toRadians(180)))
                 .forward(9)
                 .waitSeconds(0)
                 .build();
         TrajectorySequence yellow3Drop = vvdrive.trajectorySequenceBuilder(yellow3.end())
                 .back(5)
                 .turn(Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(-98,-55,Math.toRadians(235)))
+                .lineToLinearHeading(new Pose2d(-98,-63,Math.toRadians(235)))
                 //.lineTo(new Vector2d(-118,-50))
                 //.lineToLinearHeading(new Pose2d(-115,-60,Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
@@ -168,7 +168,7 @@ public class vvBasket extends LinearOpMode {
                 robot.closeClaw();
                 sleep(100);
                 vvdrive.followTrajectorySequence(yellow2Drop);
-                sleep(500);
+                sleep(350);
                 robot.openClaw();
                 sleep(150);
                 robot.closeClaw();
