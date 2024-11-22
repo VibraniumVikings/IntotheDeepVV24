@@ -14,9 +14,9 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  * Auton with 1 high chamber, pick and retrieve from obs zone, and park
  * Start the robot left side on the x tile line against the wall
  */
-@Autonomous(name = "vvChamber", group = "2 - Auton", preselectTeleOp="vvTeleOp")
+@Autonomous(name = "vvChamberPedro", group = "2 - Auton", preselectTeleOp="vvTeleOp")
 
-public class vvChamber extends LinearOpMode {
+public class vvChamberPedro extends LinearOpMode {
     vvHardwareITDRR robot = new vvHardwareITDRR(this);
 
     private ElapsedTime runtime = new ElapsedTime();

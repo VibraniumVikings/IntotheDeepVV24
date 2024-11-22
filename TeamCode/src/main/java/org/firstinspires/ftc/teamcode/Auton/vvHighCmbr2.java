@@ -31,12 +31,10 @@ public class vvHighCmbr2 extends LinearOpMode {
         vvdrive.setPoseEstimate(startPose);
 
         TrajectorySequence fwdHighChmbr = vvdrive.trajectorySequenceBuilder(startPose) //Also Red Back
-                .setConstraints(robot.hcv,robot.hca)
                 .forward(31)
                 .waitSeconds(0)
                 .build();
         TrajectorySequence sample1Pick  = vvdrive.trajectorySequenceBuilder(fwdHighChmbr.end())
-                .resetConstraints()
                 .back(6)
                 .strafeRight(88)
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {

@@ -25,7 +25,7 @@ import java.util.Objects;
      * Start the robot left side on the x tile line against the wall
      *
      */
-    @Autonomous(name = "vvHighCmbr", group = "2 - Auton", preselectTeleOp="vvTeleOp")
+    @Autonomous(name = "vvHighCmbr", group = "4 - Auton", preselectTeleOp="vvTeleOp")
 
     public class vvHighCmbr extends LinearOpMode {
         vvHardwareITDRR robot = new vvHardwareITDRR(this);

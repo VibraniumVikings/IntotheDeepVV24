@@ -76,7 +76,7 @@ public class vvHardwareITD {
     final public int armHighBa = 2159;
     final public int armRearBa = 2600; //Max arm is 3747, 2560 is vertical
     final public int armFloorSub = 400; // 400 for metal, ~200 for claw?
-    final public int armWall = 300;
+    final public int armWall = 350; //300
     final public int armAscent = 1500;
     final public double armEPower = 0.5;
     final public int extArmAscentGrab = 1450; //20" high is 1450

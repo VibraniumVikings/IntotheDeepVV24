@@ -175,9 +175,9 @@ public class vvNewArm extends LinearOpMode {
                     robot.moveWristLowBw();
                 }*/
                 if (gamepad2.dpad_left) { //High Chamber
-                    robot.armPos(robot.armHighCa, robot.armEPower);
+                    robot.armPos(robot.armHighCa-250, robot.armEPower);
                     robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
-                    robot.moveWristHighCw();
+                    robot.wrist.setPosition(0.55);
                 }
                 /*if (gamepad2.dpad_down) { //Low Chamber
                     robot.armPos(robot.armLowCa, robot.armEPower);

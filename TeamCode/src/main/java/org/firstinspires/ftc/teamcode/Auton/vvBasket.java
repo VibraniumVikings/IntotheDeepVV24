@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  * Start the robot with the right side on the X tile line against the wall-
  *
  */
-@Autonomous(name = "vvBasket", group = "3 - Auton", preselectTeleOp="vvTeleOp")
+@Autonomous(name = "vvBasket", group = "1 - Auton", preselectTeleOp="vvTeleOp")
 
 public class vvBasket extends LinearOpMode {
     vvHardwareITDRR robot = new vvHardwareITDRR(this);
@@ -38,15 +38,15 @@ public class vvBasket extends LinearOpMode {
         vvdrive.setPoseEstimate(startPose);
 
         TrajectorySequence fwdHighCmbr = vvdrive.trajectorySequenceBuilder(startPose)//Tile Start Position
-                .setConstraints(robot.hcv,robot.hca)
+                //.setConstraints(robot.hcv,robot.hca)
                 .forward(30)
                 .waitSeconds(0)
                 .build();
         TrajectorySequence yellow1 = vvdrive.trajectorySequenceBuilder(fwdHighCmbr.end())
-                .resetConstraints()
+                //.resetConstraints()
                 .back(8)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> robot.extArmPos(0, robot.armEPower))
-                .lineToLinearHeading(new Pose2d(-85,-45,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-82,-46,Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
                     robot.led.setPosition(0.7);
                     robot.moveWristFloor();
@@ -57,7 +57,7 @@ public class vvBasket extends LinearOpMode {
                 .forward(5)
                 .build();
         TrajectorySequence yellow1Drop = vvdrive.trajectorySequenceBuilder(yellow1.end())
-                .lineTo(new Vector2d(-119,-60))
+                .lineTo(new Vector2d(-117,-60))
                 //.lineToLinearHeading(new Pose2d(-106,-65,Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     robot.armPos(robot.armRearBa, robot.armEPower); //
@@ -70,7 +70,7 @@ public class vvBasket extends LinearOpMode {
         TrajectorySequence yellow2 = vvdrive.trajectorySequenceBuilder(yellow1Drop.end())
                 //.turn(Math.toRadians(60))
                 //.lineTo(new Vector2d(-105,-45))
-                .lineToLinearHeading(new Pose2d(-102,-49,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-101,-46,Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     robot.moveWristFloor();
                     robot.armPos(robot.floorArm, robot.armEPower);
@@ -91,7 +91,7 @@ public class vvBasket extends LinearOpMode {
                 .waitSeconds(0.5)
                 .build();
         TrajectorySequence yellow3 = vvdrive.trajectorySequenceBuilder(yellow2Drop.end())
-                .lineTo(new Vector2d(-98,-60)) //96 47
+                .lineTo(new Vector2d(-98,-58)) //96 47
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
                     robot.moveWristHighBw();
                     robot.armPos(robot.floorArm, robot.armEPower);
@@ -105,7 +105,7 @@ public class vvBasket extends LinearOpMode {
         TrajectorySequence yellow3Drop = vvdrive.trajectorySequenceBuilder(yellow3.end())
                 .back(5)
                 .turn(Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(-98,-63,Math.toRadians(235)))
+                .lineToLinearHeading(new Pose2d(-98,-64,Math.toRadians(235)))
                 //.lineTo(new Vector2d(-118,-50))
                 //.lineToLinearHeading(new Pose2d(-115,-60,Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
