@@ -1,25 +1,19 @@
 package org.firstinspires.ftc.teamcode.Core;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 /** This class is nearly identical to vvHardwareITD, except there are differences due to the auton starting position difference */
 
-public class vvHardwareITDRR {
+public class vvHardwareITDPedro {
     /* Declare OpMode members. */
-    private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
+    //private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
+
+    public HardwareMap hardwareMap;
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
     public DcMotorEx leftFront;
@@ -65,8 +59,8 @@ public class vvHardwareITDRR {
 
     final public int floorArm = 0;// -84
     final public int armLowCa = 550; //
-    final public int armHighCa = 1250; //was 1200
-    final public int armHighCaNew = 1000;
+    final public int armHighCa = 1300; //was 1200
+    final public int armHighCaNew = 1050;
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
     final public int armRearBa = 2600;
@@ -97,10 +91,25 @@ public class vvHardwareITDRR {
     public double encTicksPerInches = TICKS_PER_REV/(WHEEL_DIAMETER*Math.PI);
     public double encInchesPerTicks = (WHEEL_DIAMETER*Math.PI)/TICKS_PER_REV;
 
-    // Define a constructor that allows the OpMode to pass a reference to itself.
-    public vvHardwareITDRR(LinearOpMode opmode) {
-        myOpMode = opmode;
+    public boolean autonomous = false;
+
+    /**
+     * This creates a new Follower given a HardwareMap.
+     *
+     * @param hardwareMap HardwareMap required
+     */
+    public vvHardwareITDPedro(HardwareMap hardwareMap) {
+        this.hardwareMap = hardwareMap;
+        init();
     }
+    public vvHardwareITDPedro(boolean setAuto) {
+        autonomous = setAuto;
+    }
+
+    // Define a constructor that allows the OpMode to pass a reference to itself.
+    /*public vvHardwareITDRR(LinearOpMode opmode) {
+        myOpMode = opmode;
+    }*/
 
     /**
      * Initialize all the robot's hardware.
@@ -112,10 +121,10 @@ public class vvHardwareITDRR {
 
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
 
-        extend = myOpMode.hardwareMap.get(DcMotorEx.class, "extend");
-        arm = myOpMode.hardwareMap.get(DcMotorEx.class, "arm");
-        leftLift = myOpMode.hardwareMap.get(DcMotorEx.class, "ltLift");
-        rightLift = myOpMode.hardwareMap.get(DcMotorEx.class, "rtLift");
+        extend = hardwareMap.get(DcMotorEx.class, "extend");
+        arm = hardwareMap.get(DcMotorEx.class, "arm");
+        leftLift = hardwareMap.get(DcMotorEx.class, "ltLift");
+        rightLift = hardwareMap.get(DcMotorEx.class, "rtLift");
 
         //Shadow the motors with encoder-odometry
         //parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront"));
@@ -124,10 +133,10 @@ public class vvHardwareITDRR {
         parallelEncoder = rightFront; //Will need to use an opposite sign for right
 
         // Define Servos
-        claw = myOpMode.hardwareMap.get(Servo.class,"claw");
-        wrist = myOpMode.hardwareMap.get(Servo.class,"wrist");
-        rgb = myOpMode.hardwareMap.get(Servo.class,"rgb");
-        led = myOpMode.hardwareMap.get(Servo.class, "led");
+        claw = hardwareMap.get(Servo.class,"claw");
+        wrist = hardwareMap.get(Servo.class,"wrist");
+        rgb = hardwareMap.get(Servo.class,"rgb");
+        led = hardwareMap.get(Servo.class, "led");
 
         wrist.scaleRange(0,1);
         wrist.setDirection(Servo.Direction.FORWARD);
@@ -167,9 +176,10 @@ public class vvHardwareITDRR {
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        myOpMode.telemetry.addData(">", "Hardware Initialized");
-        myOpMode.telemetry.addData("Claw", claw.getPosition());
-        myOpMode.telemetry.update();
+        //telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        //telemetry.addData(">", "Hardware Initialized");
+        //telemetry.addData("Claw", claw.getPosition());
+        //telemetry.update();
     }
 
     /**

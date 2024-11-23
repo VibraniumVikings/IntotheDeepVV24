@@ -4,15 +4,25 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Core.vvHardwareITDRR;
-import org.firstinspires.ftc.teamcode.Core.vvRoadRunnerDrive;
+import org.firstinspires.ftc.teamcode.Core.vvHardwareITDPedro;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-//import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierPoint;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.MathFunctions;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.SingleRunAction;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 
-// Auton with 1 high chamber, 2 high baskets and park
+// Pedro Auton with 1 high chamber, 3 high baskets and park
 
 /*
  * High Basket Sequence
@@ -21,40 +31,65 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  */
 @Autonomous(name = "vvBasketPedro", group = "1 - Auton", preselectTeleOp="vvTeleOp")
 
-public class vvBasketPedro extends LinearOpMode {
-    vvHardwareITDRR robot = new vvHardwareITDRR(this);
+public class vvBasketPedro extends OpMode {
+    private vvHardwareITDPedro robot;
 
     private ElapsedTime runtime = new ElapsedTime();
 
+    private Timer pathTimer, opmodeTimer;
 
-    @Override
-    public void runOpMode() {
+    private Follower follower;
 
-        vvRoadRunnerDrive vvdrive = new vvRoadRunnerDrive(hardwareMap);
+    private Path fwdHighCmbr;
 
-        // We want to start the bot at x: 14, y: -60, heading: 90 degrees
-        Pose2d startPose = new Pose2d(-12, -65, Math.toRadians(90));
+    private PathChain yellow1, yellow1drop, yellow2, yellow2drop, yellow3, yellow3drop, ascent;
 
-        vvdrive.setPoseEstimate(startPose);
+    private int pathState;
 
-        TrajectorySequence fwdHighCmbr = vvdrive.trajectorySequenceBuilder(startPose)//Tile Start Position
-                //.setConstraints(robot.hcv,robot.hca)
-                .forward(30)
-                .waitSeconds(0)
+    // We want to start the bot at x: 14, y: -60, heading: 90 degrees
+    private Pose startPose = new Pose(-7+72, -65+72, Math.toRadians(90));
+    // all sample mark locations
+    private Pose DropPosition = new Pose ( -56+72,-56+72);
+    private Pose sampleMark1 = new Pose(-49.5+72,-45+72);
+    private Pose sampleMark2 = new Pose(-12+72,-45+72);
+    private Pose sampleMark3 = new Pose(36+72,-45+72);
+    private Pose specimenMark1 = new Pose(36+72, -45+72);
+    private Pose specimenMark2 = new Pose(24.5+72, -45+72);
+    private Pose specimenMark3 = new Pose(36+72, -45+72);
+
+    public void buildPaths() {
+
+        fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN), new Point(-7 + 72, -38.5 + 72, Point.CARTESIAN))); //Tile Start Position
+        fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
+        fwdHighCmbr.setPathEndTimeoutConstraint(3);
+
+        yellow1 = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(-7 + 72, -38.5 + 72), new Point(sampleMark1.getX()+1, sampleMark1.getY()-17, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(startPose.getHeading())
+                .addPath(new BezierLine(new Point(sampleMark1.getX()+1,sampleMark1.getY()-17, Point.CARTESIAN), new Point(sampleMark1.getX()+1,sampleMark1.getY()-6, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(startPose.getHeading())
+                .setPathEndTimeoutConstraint(0)
                 .build();
-        TrajectorySequence yellow1 = vvdrive.trajectorySequenceBuilder(fwdHighCmbr.end())
+        yellow1drop = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(DropPosition.getX(),DropPosition.getY(), Point.CARTESIAN), new Point(DropPosition.getX(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(DropPosition.getHeading()+45)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        //fwdHighCmbr.setPathEndTimeoutConstraint(3);
+    }
+        /*TrajectorySequence yellow1 = vvdrive.trajectorySequenceBuilder(fwdHighCmbr.end())
                 //.resetConstraints()
-                .back(8)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> robot.extArmPos(0, robot.armEPower))
-                .lineToLinearHeading(new Pose2d(-82,-46,Math.toRadians(90)))
+                .addPath(new BezierLine(new Point(yellow1.getX()+24, 24, Point.CARTESIAN)
                 .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
-                    robot.led.setPosition(0.7);
+                    //robot.led.setPosition(0.7);
                     robot.moveWristFloor();
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
                 })
                 .waitSeconds(0)
-                .forward(5)
+                .forward(12)
                 .build();
         TrajectorySequence yellow1Drop = vvdrive.trajectorySequenceBuilder(yellow1.end())
                 .lineTo(new Vector2d(-117,-60))
@@ -127,85 +162,164 @@ public class vvBasketPedro extends LinearOpMode {
                 .forward(16)
                 .waitSeconds(0)
                 .build();
-
-        robot.init();
-
-        // Wait for the DS start button to be touched.
-        telemetry.addData(">", "Robot Ready");
-        telemetry.update();
-
-        waitForStart();
-
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-
-                Pose2d poseEstimate = vvdrive.getPoseEstimate();
-                vvdrive.update();
-
+*/
+    public void autonPathUpdate() {
+        switch (pathState){
+            case 9: //move arm to position
                 robot.rgb.setPosition(0.5);
-                telemetry.addData("Parallel Position: ", poseEstimate.getX());
-                telemetry.addData("Perpendicular Position: ", poseEstimate.getY());
-                telemetry.update();
-                robot.armPos(robot.armHighCa+100, robot.armEPower+0.3);
+                robot.armPos(robot.armHighCa, robot.armEPower);
+                //robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
                 robot.moveWristHighCw();
-                vvdrive.followTrajectorySequence(fwdHighCmbr);
-                sleep(200);
-                robot.armPos(robot.armHighCa-250,0.4);
-                sleep(350);
-                robot.openClaw();
-                sleep(100);
-                vvdrive.followTrajectorySequence(yellow1);
+
+                setPathState(10);
+                break;
+
+            case 10: //high chamber specimen placement
+                if (pathTimer.getElapsedTime() > 400) {
+                    follower.followPath(fwdHighCmbr);
+
+                    setPathState(11);
+
+                    break;
+                }
+            case 11:
+                if (pathTimer.getElapsedTime() > 2000) {
+                    robot.armPos(robot.armHighCa-250,0.4);
+                    try {
+                        Thread.sleep(350);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    robot.openClaw();
+                robot.extArmPos(50, robot.extArmEPower);
+                follower.followPath(yellow1);
+
+                setPathState(100);
+
+                break;
+
+            }
+            case 100:
+                if (!follower.isBusy()) {
+                    //setPathState(-1);
+                }
+                break;
+
+            default:
+                requestOpModeStop();
+                break;
+
+        }
+    }
+
+                /*follower.followPath(yellow1);
                 //robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
                 robot.closeClaw();
                 sleep(100);
-                vvdrive.followTrajectorySequence(yellow1Drop);
+                follower.followPath(yellow1Drop);
                 //robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
                 sleep(250);
                 robot.openClaw();
                 sleep(100);
-                vvdrive.followTrajectorySequence(yellow2);
+                follower.followPath(yellow2);
                 sleep(100);
                 robot.closeClaw();
                 sleep(100);
-                vvdrive.followTrajectorySequence(yellow2Drop);
+                follower.followPath(yellow2Drop);
                 sleep(350);
                 robot.openClaw();
                 sleep(150);
                 robot.closeClaw();
                 robot.moveWristFloor();
                 robot.extArmPos(50, robot.armEPower);
-                vvdrive.followTrajectorySequence(yellow3);
+                follower.followPath(yellow3);
                 sleep(100);
                 robot.closeClaw();
                 sleep(100);
-                vvdrive.followTrajectorySequence(yellow3Drop);
+                follower.followPath(yellow3Drop);
                 sleep(100);
                 robot.openClaw();
                 sleep(250);
                 robot.closeClaw();
                 robot.moveWristFloor();
-                vvdrive.followTrajectorySequence(ascentPark);
+                follower.followPath(ascentPark);
                 sleep(500);
                 robot.led.setPosition(0);
                 robot.rgb.setPosition(0.29);
-                //sleep(500); //cutting out early due to time
-                //vvdrive.followTrajectorySequence(yellow2Drop);
-                //robot.openClaw();
-                //sleep(500);
-                //vvdrive.followTrajectorySequence(ascentPark);
-                //robot.closeClaw();
-                //sleep(500);
-                //robot.armPos(0,robot.armEPower);
-                //robot.moveWristCarry();
-                //robot.extArmPos(0,robot.extArmEPower);
-                //robot.rgb.setPosition(0.29);
-                //sleep(1000);
-                telemetry.addData("Parallel Position: ", poseEstimate.getX());
-                telemetry.addData("Perpendicular Position: ", poseEstimate.getY());
+                sleep(500); //cutting out early due to time
+                vvdrive.followTrajectorySequence(yellow2Drop);
+                robot.openClaw();
+                sleep(500);
+                vvdrive.followTrajectorySequence(ascentPark);
+                robot.closeClaw();
+                sleep(500);
+                robot.armPos(0,robot.armEPower);
+                robot.moveWristCarry();
+                robot.extArmPos(0,robot.extArmEPower);
+                robot.rgb.setPosition(0.29);
+                sleep(1000);
+                telemetry.addData("path state", pathState);
+                telemetry.addData("x", follower.getPose().getX());
+                telemetry.addData("y", follower.getPose().getY());
                 telemetry.update();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                break;*/
+    @Override
+    public void loop() {
 
-                break;
+        follower.update();
+
+        autonPathUpdate();
+
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.update();
+    }
+
+    @Override
+    public void init() {
+        //foldUp = new SingleRunAction(()-> {
+        //    if (Integer.parseInt(String.valueOf(pathState).substring(0,1)) < 4) setPathState(50);
+        //});
+
+        robot = new vvHardwareITDPedro(true);
+        robot.hardwareMap = hardwareMap;
+        //robot.telemetry = telemetry;
+
+        pathTimer = new Timer();
+        opmodeTimer = new Timer();
+
+        robot.init();
+
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(startPose);
+
+        // Wait for the DS start button to be touched.
+        telemetry.addData(">", "Robot Ready");
+        telemetry.update();
+
+    }
+    public void setPathState(int state) {
+        pathState = state;
+        pathTimer.resetTimer();
+        autonPathUpdate();
+    }
+    @Override
+    public void start() {
+
+                buildPaths();
+
+                resetRuntime();
+
+                setPathState(9);
+
             }
-        }
+    @Override
+    public void stop() {
     }
 }

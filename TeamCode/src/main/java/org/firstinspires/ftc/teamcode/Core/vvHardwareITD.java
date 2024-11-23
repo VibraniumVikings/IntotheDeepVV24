@@ -64,6 +64,7 @@ public class vvHardwareITD {
     public static final double floorPick = 0.1 ; //Metal 0.1 3D Print 0.4
     public static final double floorCarry = 0.9 ;
     public static final double highCw  = 0.3 ;
+    public static final double highCwNew  = 0.55 ;
     public static final double lowCW = 0.5 ;
     public static final double highBw = 0.2 ;
     public static final double lowBw = 0.3 ;
@@ -72,6 +73,7 @@ public class vvHardwareITD {
     final public int floorArm = 0;// 0 for metal, ~50 for claw?
     final public int armLowCa = 550; //
     final public int armHighCa = 1250; //was 1200
+    final public int armHighCaNew = 1050;
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
     final public int armRearBa = 2600; //Max arm is 3747, 2560 is vertical
@@ -368,6 +370,9 @@ public class vvHardwareITD {
     }
     public void moveWristHighCw() {
         wrist.setPosition(highCw);
+    }
+    public void moveWristHighCwNew() {
+        wrist.setPosition(highCwNew);
     }
     public void moveWristLowCW() {
         wrist.setPosition(lowCW);
