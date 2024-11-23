@@ -6,7 +6,7 @@ import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.hardware.limelightvision.LLResultTypes.CalibrationResult;
+//import com.qualcomm.hardware.limelightvision.LLResultTypes.CalibrationResult;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -36,7 +36,7 @@ public class vvLimeLightNeural extends LinearOpMode {
                     isInit = true;
             }
         } catch (Exception e) {
-            telemetry.addData(">", "Error in InitLimeLight." + e.toString());
+            telemetry.addData(">", "Error in InitLimeLight." + e);
         }
         return isInit;
     }
@@ -50,14 +50,14 @@ public class vvLimeLightNeural extends LinearOpMode {
             {
                 if(limelight.isRunning()) {
                     limelight.stop();
-                    if (limelight.isRunning() == false)
+                    if (limelight.isRunning())
                         isStop = true;
                 }
                 else
                     isStop = true;
             }
         } catch (Exception e) {
-            telemetry.addData(">", "Error in StopLimeLight." + e.toString());
+            telemetry.addData(">", "Error in StopLimeLight." + e);
         }
         return isStop;
     }
@@ -75,7 +75,7 @@ public class vvLimeLightNeural extends LinearOpMode {
                     isStart = true;
             }
         } catch (Exception e) {
-            telemetry.addData(">", "Error in Starting LimeLight." + e.toString());
+            telemetry.addData(">", "Error in Starting LimeLight." + e);
         }
         return isStart;
     }
@@ -103,7 +103,7 @@ public class vvLimeLightNeural extends LinearOpMode {
             {
                 // Access detector results for neural detection
                 List<LLResultTypes.DetectorResult> detectorResults = result.getDetectorResults();
-                if(detectorResults != null && detectorResults.size() > 0) {
+                if(detectorResults != null && !detectorResults.isEmpty()) {
                     for (LLResultTypes.DetectorResult dr : detectorResults)
                     {
                         detectorName = dr.getClassName();
@@ -241,13 +241,17 @@ public class vvLimeLightNeural extends LinearOpMode {
     {
         boolean isSuccess = initLL();
         if(isSuccess)
-            startLimelight();
-        while (opModeIsActive())
-        {
-            getLimeLightStatus();
-            getLatestResult();
+            isSuccess = startLimelight();
+        if(isSuccess) {
+            while (opModeIsActive()) {
+                getLimeLightStatus();
+                getLatestResult();
+            }
+            isSuccess = StopLimelight();
+            if (!isSuccess) {
+                telemetry.addData("Limelight", "No data available");
+            }
         }
-        StopLimelight();
 
     }//en of ru nop mode
 

@@ -5,14 +5,14 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
+//import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Core.vvHardwareITDRR;
 import org.firstinspires.ftc.teamcode.Core.vvRoadRunnerDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 //import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-
+import org.firstinspires.ftc.teamcode.Concept.vvLimeLightNeural;
 // Auton with 1 high chamber, 2 high baskets and park
 
 /*
@@ -25,11 +25,23 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class vvLimeBasket extends LinearOpMode {
     vvHardwareITDRR robot = new vvHardwareITDRR(this);
 
-    private ElapsedTime runtime = new ElapsedTime();
-
+    //private ElapsedTime runtime = new ElapsedTime();
+    vvLimeLightNeural _limeLightNeural = new vvLimeLightNeural();
+    private boolean _isLimeLightConneted = false;
 
     @Override
     public void runOpMode() {
+
+        //Initialize the limelight using try and catch
+        //if error is there during initialization set flag don't use limelight
+        //call limelight
+        boolean isSuccess = _limeLightNeural.initLL();//Initialize the lime light class
+        if(isSuccess)
+        {
+            _isLimeLightConneted = _limeLightNeural.startLimelight();
+            if(_isLimeLightConneted)
+                _limeLightNeural.getLimeLightStatus();
+        }
 
         vvRoadRunnerDrive vvdrive = new vvRoadRunnerDrive(hardwareMap);
 
@@ -38,16 +50,24 @@ public class vvLimeBasket extends LinearOpMode {
 
         vvdrive.setPoseEstimate(startPose);
 
-        TrajectorySequence fwdHighCmbr = vvdrive.trajectorySequenceBuilder(startPose)//Tile Start Position
+        // Step 1: Move forward units
+        TrajectorySequence fwdHighCmbr = vvdrive.trajectorySequenceBuilder(startPose) //Tile Start Position
                 //.setConstraints(robot.hcv,robot.hca)
                 .forward(31)
                 .waitSeconds(0)
                 .build();
+
+        // Step 2: Hang the speciment on the chamber and back 8 units
+        //TODO all trajectory sequnce need to changed without picking the samples
+        //need to check the sample is there or not using limelight class
+
         TrajectorySequence yellow1 = vvdrive.trajectorySequenceBuilder(fwdHighCmbr.end())
                 //.resetConstraints()
                 .back(8)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> robot.extArmPos(0, robot.armEPower))
-                .lineToLinearHeading(new Pose2d(-85,-45,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-85,-45,Math.toRadians(90))) // Goes near to the first yellow specimen location
+
+
                 .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
                     robot.led.setPosition(0.7);
                     robot.moveWristFloor();
@@ -55,8 +75,10 @@ public class vvLimeBasket extends LinearOpMode {
                     robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
                 })
                 .waitSeconds(0)
-                .forward(5)
+                // .forward(5) //should not pick yellow
                 .build();
+
+
         TrajectorySequence yellow1Drop = vvdrive.trajectorySequenceBuilder(yellow1.end())
                 .lineTo(new Vector2d(-120,-64))
                 //.lineToLinearHeading(new Pose2d(-106,-65,Math.toRadians(90)))
@@ -68,6 +90,8 @@ public class vvLimeBasket extends LinearOpMode {
                 //.turn(Math.toRadians(-60))
                 .waitSeconds(0.5)
                 .build();
+        //TODO yellow trajectory sequence seprates into multiple trajetctory sequnce
+        //All trajector sequence need to check sample is there or not by using limelight functions
         TrajectorySequence yellow2 = vvdrive.trajectorySequenceBuilder(yellow1Drop.end())
                 //.turn(Math.toRadians(60))
                 //.lineTo(new Vector2d(-105,-45))
@@ -136,9 +160,9 @@ public class vvLimeBasket extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-
+        String C_YELLOW = "Yellow";
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
+            while (opModeIsActive()) { //why loop
 
                 Pose2d poseEstimate = vvdrive.getPoseEstimate();
                 vvdrive.update();
@@ -155,7 +179,21 @@ public class vvLimeBasket extends LinearOpMode {
                 sleep(350);
                 robot.openClaw();
                 sleep(100);
-                vvdrive.followTrajectorySequence(yellow1);
+                //Check first yellow sample
+                boolean isYellow1SampleDetect = true;
+                if(_isLimeLightConneted)
+                {
+                    String sampleColor = _limeLightNeural.getDetectorName();
+                    if(sampleColor.equals(C_YELLOW))
+                    {
+                        isYellow1SampleDetect = false;
+                    }
+                }
+                if(isYellow1SampleDetect)
+                {
+                    vvdrive.followTrajectorySequence(yellow1);//TODO yellow trajectory sequence seprates into multiple trajetctory sequnce
+                }
+
                 //robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
                 robot.closeClaw();
                 sleep(100);
@@ -164,7 +202,21 @@ public class vvLimeBasket extends LinearOpMode {
                 sleep(250);
                 robot.openClaw();
                 sleep(100);
-                vvdrive.followTrajectorySequence(yellow2);
+                boolean isYellow2SampleDetect = true;
+                if(_isLimeLightConneted)
+                {
+                    String sampleColor = _limeLightNeural.getDetectorName();
+                    if(sampleColor.equals(C_YELLOW))
+                    {
+                        isYellow2SampleDetect = false;
+                    }
+                }
+                if(isYellow2SampleDetect)
+                {
+                    vvdrive.followTrajectorySequence(yellow2);
+                    //TODO get Pos postion from LimeLightClass()
+                }
+
                 sleep(100);
                 robot.closeClaw();
                 sleep(100);
@@ -175,7 +227,22 @@ public class vvLimeBasket extends LinearOpMode {
                 robot.closeClaw();
                 robot.moveWristFloor();
                 robot.extArmPos(50, robot.armEPower);
-                vvdrive.followTrajectorySequence(yellow3);
+                boolean isYellow3SampleDetect = true;
+                if(_isLimeLightConneted)
+                {
+                    String sampleColor = _limeLightNeural.getDetectorName();
+                    if(sampleColor.equals(C_YELLOW) )
+                    {
+                        isYellow3SampleDetect = false;
+                    }
+                }
+
+                if(isYellow3SampleDetect)
+                {
+                    //TODO get Pos postion from LimeLightClass()
+                    vvdrive.followTrajectorySequence(yellow3);
+                }
+
                 sleep(100);
                 robot.closeClaw();
                 sleep(100);
