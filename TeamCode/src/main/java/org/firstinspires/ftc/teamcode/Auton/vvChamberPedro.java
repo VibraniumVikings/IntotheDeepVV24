@@ -4,32 +4,74 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Core.vvHardwareITDRR;
-import org.firstinspires.ftc.teamcode.Core.vvRoadRunnerDrive;
+import org.firstinspires.ftc.teamcode.Core.vvHardwareITDPedro;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierPoint;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.MathFunctions;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.SingleRunAction;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 /*
- * Auton with 1 high chamber, pick and retrieve from obs zone, and park
+ * Auton with 1 high chamber, move two alliance samples to obs zone, pick and retrieve from obs zone, and park
  * Start the robot left side on the x tile line against the wall
  */
 @Autonomous(name = "vvChamberPedro", group = "2 - Auton", preselectTeleOp="vvTeleOp")
 
-public class vvChamberPedro extends LinearOpMode {
-    vvHardwareITDRR robot = new vvHardwareITDRR(this);
+public class vvChamberPedro extends OpMode {
+    private vvHardwareITDPedro robot;
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    @Override
-    public void runOpMode() {
+    private Timer pathTimer, opmodeTimer;
 
-        vvRoadRunnerDrive vvdrive = new vvRoadRunnerDrive(hardwareMap);
+    private Follower follower;
 
-        // We want to start the bot at x: 14, y: -60, heading: 90 degrees
-        Pose2d startPose = new Pose2d(12, -65, Math.toRadians(90));
+    private Path fwdHighCmbr;
 
-        vvdrive.setPoseEstimate(startPose);
+    private PathChain sample1, sample2, sample2Drop, sample1Place, sample2Pick, sample2Place, obsZone;
+
+    private int pathState;
+
+    // We want to start the bot at x: 14, y: -60, heading: 90 degrees
+    private Pose startPose = new Pose(7+72, -65+72, Math.toRadians(90));
+    // all sample mark locations
+    private Pose DropPosition = new Pose (-56+72,-56+72);
+    private Pose sampleMark1 = new Pose(-49.5+72,-45+72);
+    private Pose sampleMark2 = new Pose(-12+72,-45+72);
+    private Pose sampleMark3 = new Pose(36+72,-45+72);
+    private Pose specimenMark1 = new Pose(36+72, -45+72);
+    private Pose specimenMark2 = new Pose(24.5+72, -45+72);
+    private Pose specimenMark3 = new Pose(36+72, -45+72);
+
+    public void buildPaths() {
+
+        fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN), new Point(7 + 72, -38.5 + 72, Point.CARTESIAN))); //Tile Start Position
+        fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
+        fwdHighCmbr.setPathEndTimeoutConstraint(3);
+
+        sample1 = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(7 + 72, -38.5 + 72), new Point(sampleMark1.getX()+1, sampleMark1.getY()-17, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(startPose.getHeading())
+                .addPath(new BezierLine(new Point(sampleMark1.getX()+1,sampleMark1.getY()-17, Point.CARTESIAN), new Point(sampleMark1.getX()+1,sampleMark1.getY()-6, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(startPose.getHeading())
+                .setPathEndTimeoutConstraint(0)
+                .build();
+        sample2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(DropPosition.getX(),DropPosition.getY(), Point.CARTESIAN), new Point(DropPosition.getX(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(DropPosition.getHeading()+45)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+    }
 
         /*  MeepMeep            .forward(31)
                                 .back(16)
@@ -43,13 +85,7 @@ public class vvChamberPedro extends LinearOpMode {
                                 .lineToLinearHeading(new Pose2d(6,-36,Math.toRadians(90)))
                                 .forward(5)
                                 .lineToLinearHeading(new Pose2d(48,-60,Math.toRadians(90)))
-          */
-
-        TrajectorySequence fwdHighChmbr = vvdrive.trajectorySequenceBuilder(startPose) //Also Red Back
-                //.setConstraints(robot.hcv,robot.hca)
-                .forward(30)
-                .waitSeconds(0)
-                .build();
+        
         TrajectorySequence sample1  = vvdrive.trajectorySequenceBuilder(fwdHighChmbr.end())
                 //.setConstraints(robot.hspdv,robot.hspda)
                 .back(8)
@@ -106,14 +142,111 @@ public class vvChamberPedro extends LinearOpMode {
                     robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower); })
                 .waitSeconds(0)
                 .build();
+        */
+        public void autonPathUpdate() {
+        switch (pathState){
+            case 9: //move arm to position
+                robot.rgb.setPosition(0.5);
+                robot.armPos(robot.armHighCa, robot.armEPower);
+                //robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
+                robot.moveWristHighCw();
+
+                setPathState(10);
+                break;
+
+            case 10: //high chamber specimen placement
+                if (pathTimer.getElapsedTime() > 400) {
+                    follower.followPath(fwdHighCmbr);
+
+                    setPathState(11);
+
+                    break;
+                }
+            case 11:
+                if (pathTimer.getElapsedTime() > 2000) {
+                    robot.armPos(robot.armHighCa-250,0.4);
+                    try {
+                        Thread.sleep(350);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    robot.openClaw();
+                robot.extArmPos(50, robot.extArmEPower);
+                follower.followPath(yellow1);
+
+                setPathState(100);
+
+                break;
+
+            }
+            case 100:
+                if (!follower.isBusy()) {
+                    //setPathState(-1);
+                }
+                break;
+
+            default:
+                requestOpModeStop();
+                break;
+
+        }
+    }
+    @Override
+    public void loop() {
+
+        follower.update();
+
+        autonPathUpdate();
+
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.update();
+    }
+
+    @Override
+    public void init() {
+        //foldUp = new SingleRunAction(()-> {
+        //    if (Integer.parseInt(String.valueOf(pathState).substring(0,1)) < 4) setPathState(50);
+        //});
+
+        robot = new vvHardwareITDPedro(true);
+        robot.hardwareMap = hardwareMap;
+        //robot.telemetry = telemetry;
+
+        pathTimer = new Timer();
+        opmodeTimer = new Timer();
 
         robot.init();
 
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(startPose);
+
         // Wait for the DS start button to be touched.
         telemetry.addData(">", "Robot Ready");
+        telemetry.update();
 
-        waitForStart();
+    }
+    public void setPathState(int state) {
+        pathState = state;
+        pathTimer.resetTimer();
+        autonPathUpdate();
+    }
+    @Override
+    public void start() {
 
+                buildPaths();
+
+                resetRuntime();
+
+                setPathState(9);
+
+            }
+    @Override
+    public void stop() {
+    }
+}
+/*
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
@@ -158,5 +291,5 @@ public class vvChamberPedro extends LinearOpMode {
             }
         }
     }
-}
+}*/
 
