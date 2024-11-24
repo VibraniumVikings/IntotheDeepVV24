@@ -46,7 +46,7 @@ public class vvBasketPedro extends OpMode {
 
     private int pathState;
 
-    // We want to start the bot at x: 14, y: -60, heading: 90 degrees
+    // We want to start the bot at x: 14, y: -60, heading: 90 degrees (there are FIRST coordinates)
     private Pose startPose = new Pose(65, 7, Math.toRadians(90));
     // all sample mark locations
     private Pose highchamber = new Pose(65,33.5);
@@ -58,13 +58,18 @@ public class vvBasketPedro extends OpMode {
     private Pose specimenMark2 = new Pose(24.5+72, -45+72);
     private Pose specimenMark3 = new Pose(36+72, -45+72);
     private Pose parking  = new Pose(48, 72);
+    
+    public double botWidth = 14;
+    public double botPickup = 11;
 
     public void buildPaths() {
 
+        //High Chamber travel path
         fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN),new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN))); //Tile Start Position
         fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
         fwdHighCmbr.setPathEndTimeoutConstraint(3);
 
+        //Path from submersible to the first yellow sample
         yellow1 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(highchamber.getX(), highchamber.getY(),Point.CARTESIAN), new Point(sampleMark1.getX()+1,sampleMark1.getY()-17, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
