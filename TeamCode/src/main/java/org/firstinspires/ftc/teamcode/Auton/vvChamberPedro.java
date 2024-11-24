@@ -38,7 +38,7 @@ public class vvChamberPedro extends OpMode {
 
     private Path fwdHighCmbr;
 
-    private PathChain sample1, sample2, sample2Drop, sample1Place, sample2Pick, sample2Place, obsZone;
+    private PathChain sample1, sample1drop,sample2, sample2Drop,sample1pick, sample1Place, sample2Pick, sample2Place, obsZone;
 
     private int pathState;
 
@@ -52,6 +52,7 @@ public class vvChamberPedro extends OpMode {
     private Pose specimenMark1 = new Pose(36+72, -45+72);
     private Pose specimenMark2 = new Pose(24.5+72, -45+72);
     private Pose specimenMark3 = new Pose(36+72, -45+72);
+    private Pose observationZone= new Pose(-11+72,-56+72);
 
     public void buildPaths() {
 
@@ -60,18 +61,51 @@ public class vvChamberPedro extends OpMode {
         fwdHighCmbr.setPathEndTimeoutConstraint(3);
 
         sample1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(7 + 72, -38.5 + 72), new Point(sampleMark1.getX()+1, sampleMark1.getY()-17, Point.CARTESIAN)))
+                .addPath(new BezierCurve(new Point(7 + 72, -38.5 + 72), new Point(specimenMark1.getX()+1, specimenMark1.getY()-17, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .addPath(new BezierLine(new Point(sampleMark1.getX()+1,sampleMark1.getY()-17, Point.CARTESIAN), new Point(sampleMark1.getX()+1,sampleMark1.getY()-6, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .setPathEndTimeoutConstraint(0)
                 .build();
+
+        sample1drop = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimenMark1.getX(),specimenMark1.getY(), Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(specimenMark1.getHeading()+180)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
         sample2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(DropPosition.getX(),DropPosition.getY(), Point.CARTESIAN), new Point(DropPosition.getX(), Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(DropPosition.getHeading()+45)
+                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(specimenMark2.getX(),specimenMark2.getY(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(observationZone.getHeading()+180)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        sample1pick = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimenMark2.getX(),specimenMark2.getY(), Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(specimenMark2.getHeading()+180)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        sample1Place = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(7 + 72,-36 + 72, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(observationZone.getHeading()+180)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        sample2Pick = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(7 + 72,-36 + 72, Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(observationZone.getHeading()+180)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        sample2Place = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(7 + 72,-38 + 72, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(observationZone.getHeading()+180)
                 .setPathEndTimeoutConstraint(0)
                 .build();
     }
+
+
 
         /*  MeepMeep            .forward(31)
                                 .back(16)
@@ -172,14 +206,14 @@ public class vvChamberPedro extends OpMode {
                     }
                     robot.openClaw();
                 robot.extArmPos(50, robot.extArmEPower);
-                follower.followPath(yellow1);
+                follower.followPath(sample1);
 
                 setPathState(100);
 
                 break;
 
             }
-            case 100:
+            case 12:
                 if (!follower.isBusy()) {
                     //setPathState(-1);
                 }
