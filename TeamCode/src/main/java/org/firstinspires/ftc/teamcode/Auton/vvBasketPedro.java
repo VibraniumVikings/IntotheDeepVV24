@@ -47,32 +47,68 @@ public class vvBasketPedro extends OpMode {
     private int pathState;
 
     // We want to start the bot at x: 14, y: -60, heading: 90 degrees
-    private Pose startPose = new Pose(-7+72, -65+72, Math.toRadians(90));
+    private Pose startPose = new Pose(65, 7, Math.toRadians(90));
     // all sample mark locations
-    private Pose DropPosition = new Pose ( -56+72,-56+72);
-    private Pose sampleMark1 = new Pose(-49.5+72,-45+72);
-    private Pose sampleMark2 = new Pose(-12+72,-45+72);
-    private Pose sampleMark3 = new Pose(36+72,-45+72);
+    private Pose highchamber = new Pose(65,33.5);
+    private Pose sampleMark1 = new Pose(22.5,27);
+    private Pose sampleMark2 = new Pose(19,27);
+    private Pose sampleMark3 = new Pose(15,27);
+    private Pose dropposition = new Pose (16,16);
     private Pose specimenMark1 = new Pose(36+72, -45+72);
     private Pose specimenMark2 = new Pose(24.5+72, -45+72);
     private Pose specimenMark3 = new Pose(36+72, -45+72);
+    private Pose parking  = new Pose(48, 72);
 
     public void buildPaths() {
 
-        fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN), new Point(-7 + 72, -38.5 + 72, Point.CARTESIAN))); //Tile Start Position
+        fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN),new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN))); //Tile Start Position
         fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
         fwdHighCmbr.setPathEndTimeoutConstraint(3);
 
         yellow1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(-7 + 72, -38.5 + 72), new Point(sampleMark1.getX()+1, sampleMark1.getY()-17, Point.CARTESIAN)))
+                .addPath(new BezierCurve(new Point(highchamber.getX(), highchamber.getY(),Point.CARTESIAN), new Point(sampleMark1.getX()+1,sampleMark1.getY()-17, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .addPath(new BezierLine(new Point(sampleMark1.getX()+1,sampleMark1.getY()-17, Point.CARTESIAN), new Point(sampleMark1.getX()+1,sampleMark1.getY()-6, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .setPathEndTimeoutConstraint(0)
                 .build();
+
         yellow1drop = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(DropPosition.getX(),DropPosition.getY(), Point.CARTESIAN), new Point(DropPosition.getX(), Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(DropPosition.getHeading()+45)
+                .addPath(new BezierLine(new Point(sampleMark1.getX()+1,sampleMark1.getY()-6, Point.CARTESIAN), new Point(dropposition.getX(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(dropposition.getHeading()+45)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        yellow2 = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(dropposition.getX(), dropposition.getY(),Point.CARTESIAN), new Point(sampleMark2.getX(),sampleMark2.getY(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(dropposition.getHeading()-45)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        yellow2drop = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(sampleMark2.getX(),sampleMark2.getY(), Point.CARTESIAN), new Point(dropposition.getX(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(dropposition.getHeading()+45)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        yellow3 = follower.pathBuilder()
+                .setConstantHeadingInterpolation(dropposition.getHeading()-135)
+                .addPath(new BezierCurve(new Point(dropposition.getX(), dropposition.getY(),Point.CARTESIAN), new Point(sampleMark3.getX(),sampleMark3.getY(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(dropposition.getHeading())
+                .addPath(new BezierLine(new Point(sampleMark3.getX(),sampleMark3.getY(), Point.CARTESIAN), new Point(sampleMark3.getX(),sampleMark3.getY(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(dropposition.getHeading())
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        yellow3drop = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(sampleMark3.getX(),sampleMark3.getY(), Point.CARTESIAN), new Point(dropposition.getX(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(dropposition.getHeading()+45)
+                .setPathEndTimeoutConstraint(0)
+                .build();
+
+        ascent = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(dropposition.getX(), dropposition.getY(),Point.CARTESIAN), new Point(parking.getX(),parking.getY(), Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(dropposition.getHeading()-45)
                 .setPathEndTimeoutConstraint(0)
                 .build();
 
@@ -164,7 +200,7 @@ public class vvBasketPedro extends OpMode {
                 .build();
 */
     public void autonPathUpdate() {
-        switch (pathState){
+        switch (pathState) {
             case 9: //move arm to position
                 robot.rgb.setPosition(0.5);
                 robot.armPos(robot.armHighCa, robot.armEPower);
@@ -182,23 +218,92 @@ public class vvBasketPedro extends OpMode {
 
                     break;
                 }
-            case 11:
+            case 11: // Yellow1
                 if (pathTimer.getElapsedTime() > 2000) {
-                    robot.armPos(robot.armHighCa-250,0.4);
+                    robot.armPos(robot.armHighCa - 250, 0.4);
                     try {
                         Thread.sleep(350);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                     robot.openClaw();
-                robot.extArmPos(50, robot.extArmEPower);
-                follower.followPath(yellow1);
+                    robot.extArmPos(50, robot.extArmEPower);
+                    follower.followPath(yellow1);
 
+                    setPathState(12);
+
+                    break;
+
+                }
+            case 12: //Yellow1pick
+                if (pathTimer.getElapsedTime() > 250) {
+                    robot.moveWristFloor();
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
+
+                    setPathState(13);
+
+                    break;
+                }
+            case 13: //Yellow1drop
+                if (pathTimer.getElapsedTime() > 500) {
+                    robot.armPos(robot.armRearBa, robot.armEPower - 0.15); //
+                    robot.moveWristLowCW();
+                    robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
+                    robot.moveWristHighBw();
+
+                    setPathState(14);
+
+                    break;
+                }
+            case 14: //Yellow2pick
+                if (pathTimer.getElapsedTime() > 250) {
+                    robot.moveWristFloor();
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
+
+                    setPathState(13);
+
+                    break;
+                }
+            case 15: //Yellow2drop
+                if (pathTimer.getElapsedTime() > 500) {
+                    robot.armPos(robot.armRearBa, robot.armEPower - 0.15); //
+                    robot.moveWristLowCW();
+                    robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
+                    robot.moveWristHighBw();
+
+                    setPathState(16);
+
+                    break;
+                }
+            case 16: //Yellow3pick
+                if (pathTimer.getElapsedTime() > 250) {
+                    robot.moveWristFloor();
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
+
+                    setPathState(13);
+
+                    break;
+                }
+            case 17: //Yellow3drop
+                if (pathTimer.getElapsedTime() > 500) {
+                    robot.armPos(robot.armRearBa, robot.armEPower - 0.15); //
+                    robot.moveWristLowCW();
+                    robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
+                    robot.moveWristHighBw();
+
+                    setPathState(18);
+
+                    break;
+                }
+            case 18: //parking
+                if (pathTimer.getElapsedTime() > 500) {
+                robot.armPos(robot.armAscent, robot.extArmEPower);
                 setPathState(100);
-
                 break;
-
-            }
+                 }
             case 100:
                 if (!follower.isBusy()) {
                     //setPathState(-1);
