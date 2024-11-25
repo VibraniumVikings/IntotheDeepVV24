@@ -55,7 +55,7 @@ public class vvChamberPedro extends OpMode {
     private Pose observationZone= new Pose(61,16); // (-11+72,-56+72)
     //Kraken dimensional offsets
     public double botWidth = 7;
-    public doulbe botLength = 7;
+    public double botLength = 7;
     public double botPickup = 11;
 
     public void buildPaths() {
