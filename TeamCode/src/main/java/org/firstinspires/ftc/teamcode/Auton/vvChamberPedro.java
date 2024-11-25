@@ -45,14 +45,18 @@ public class vvChamberPedro extends OpMode {
     // We want to start the bot at x: 14, y: -60, heading: 90 degrees
     private Pose startPose = new Pose(7+72, -65+72, Math.toRadians(90));
     // all sample mark locations
-    private Pose DropPosition = new Pose (-56+72,-56+72);
-    private Pose sampleMark1 = new Pose(-49.5+72,-45+72);
-    private Pose sampleMark2 = new Pose(-12+72,-45+72);
-    private Pose sampleMark3 = new Pose(36+72,-45+72);
-    private Pose specimenMark1 = new Pose(36+72, -45+72);
-    private Pose specimenMark2 = new Pose(24.5+72, -45+72);
-    private Pose specimenMark3 = new Pose(36+72, -45+72);
-    private Pose observationZone= new Pose(-11+72,-56+72);
+    private Pose DropPosition = new Pose (16,16); // (-56+72,-56+72)
+    private Pose sampleMark1 = new Pose(22.5,27); // (-49.5+72,-45+72)
+    private Pose sampleMark2 = new Pose(60,27); // (-12+72,-45+72)
+    private Pose sampleMark3 = new Pose(108,27); // (36+72,-45+72)
+    private Pose specimenMark1 = new Pose(108, 27); // (36+72, -45+72)
+    private Pose specimenMark2 = new Pose(96.5, 27); // (24.5+72, -45+72)
+    private Pose specimenMark3 = new Pose(108, 27); // (36+72, -45+72)
+    private Pose observationZone= new Pose(61,16); // (-11+72,-56+72)
+    //Kraken dimensional offsets
+    public double botWidth = 7;
+    public doulbe botLength = 7;
+    public double botPickup = 11;
 
     public void buildPaths() {
 
@@ -196,30 +200,74 @@ public class vvChamberPedro extends OpMode {
 
                     break;
                 }
-            case 11:
-                if (pathTimer.getElapsedTime() > 2000) {
-                    robot.armPos(robot.armHighCa-250,0.4);
+
+            case 11: // Sample 1 push
+                if (pathTimer.getElapsedTime() > 250) {
+                    robot.moveWristFloor();
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
+                    try {
+                        Thread.sleep(350);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    //setPathState(-1);
+                    break;
+                }
+
+            case 12: // Sample 2 grab
+                if (pathTimer.getElapsedTime() > 250) {
+                    robot.moveWristFloor();
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
+                    try {
+                        Thread.sleep(350);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                }
+
+            case 13: // Sample 2 drop
+                if (pathTimer.getElapsedTime() > 250) {
+                    robot.moveWristWall();
+                    robot.armPos(robot.armWall, robot.armEPower);
+
                     try {
                         Thread.sleep(350);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                     robot.openClaw();
-                robot.extArmPos(50, robot.extArmEPower);
-                follower.followPath(sample1);
-
-                setPathState(100);
-
-                break;
-
-            }
-            case 12:
-                if (!follower.isBusy()) {
-                    //setPathState(-1);
                 }
                 break;
 
-            default:
+            case 14: // Specimen grab
+                if (pathTimer.getElapsedTime() > 250) {
+                    try {
+                        Thread.sleep(350);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    robot.openClaw();
+                }
+                break;
+
+            case 15: // Specimen place
+                if (pathTimer.getElapsedTime() > 250) {
+                    robot.moveWristHighCw();
+                    robot.armPos(robot.armHighCa, robot.armEPower);
+                    robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
+                    try {
+                        Thread.sleep(350);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    robot.openClaw();
+                }
+                break;
+
+                    default:
                 requestOpModeStop();
                 break;
 
