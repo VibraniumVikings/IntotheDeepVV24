@@ -60,7 +60,7 @@ public class vvBasketPedro extends OpMode {
     private Pose ascentPose  = new Pose(48, 72, Math.toRadians(0));
     //Kraken dimensional offsets
     public double botWidth = 7;
-    public doulbe botLength = 7;
+    public double botLength = 7;
     public double botPickup = 11;
 
     public void buildPaths() {
@@ -279,7 +279,7 @@ public class vvBasketPedro extends OpMode {
                 if (pathTimer.getElapsedTime() > 500) {
 
                     robot.closeClaw();
-                    robot.wristCarry();
+                    robot.moveWristCarry();
                     robot.extArmPos(0, robot.extArmEPower);
                     robot.armPos(robot.armAscent, robot.extArmEPower);
 
