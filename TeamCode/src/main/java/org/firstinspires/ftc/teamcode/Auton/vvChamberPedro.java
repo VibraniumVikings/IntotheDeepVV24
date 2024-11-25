@@ -45,14 +45,14 @@ public class vvChamberPedro extends OpMode {
     // We want to start the bot at x: 14, y: -60, heading: 90 degrees
     private Pose startPose = new Pose(7+72, -65+72, Math.toRadians(90));
     // all sample mark locations
-    private Pose DropPosition = new Pose (16,16); // (-56+72,-56+72)
-    private Pose sampleMark1 = new Pose(22.5,27); // (-49.5+72,-45+72)
-    private Pose sampleMark2 = new Pose(60,27); // (-12+72,-45+72)
-    private Pose sampleMark3 = new Pose(108,27); // (36+72,-45+72)
-    private Pose specimenMark1 = new Pose(108, 27); // (36+72, -45+72)
-    private Pose specimenMark2 = new Pose(96.5, 27); // (24.5+72, -45+72)
-    private Pose specimenMark3 = new Pose(108, 27); // (36+72, -45+72)
-    private Pose observationZone= new Pose(61,16); // (-11+72,-56+72)
+    private Pose DropPosition = new Pose (16,16);
+    private Pose sampleMark1 = new Pose(122,27);
+    private Pose sampleMark2 = new Pose(132,27);
+    private Pose sampleMark3 = new Pose(142,27);
+    private Pose specimenMark1 = new Pose(79, 27);
+    private Pose specimenMark2 = new Pose(75, 27);
+    private Pose specimenMark3 = new Pose(102, 27);
+    private Pose observationZone= new Pose(132,16);
     //Kraken dimensional offsets
     public double botWidth = 7;
     public double botLength = 7;
