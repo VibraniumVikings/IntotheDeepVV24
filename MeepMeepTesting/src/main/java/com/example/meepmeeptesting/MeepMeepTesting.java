@@ -20,16 +20,19 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, Math.toRadians(180), Math.toRadians(180), 14)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-12, -65, Math.toRadians(90)))
-                                .forward(40)
-                                .strafeLeft(6)
-                                .turn(Math.toRadians(160))
-                                .forward(24)
+                        drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(90))) //Chamber sequence
+                                .forward(31)
                                 .back(8)
-                                .turn(Math.toRadians(160))
-                                .forward(16)
-                                .turn(Math.toRadians(-90))
-                                .splineToConstantHeading(new Vector2d(48,-51),Math.toRadians(0))
+                                .lineTo(new Vector2d(34,-42))
+                                .lineToLinearHeading(new Pose2d(40,-6,Math.toRadians(90)))
+                                .lineToLinearHeading(new Pose2d(48,-60,Math.toRadians(90)))
+                                .lineToLinearHeading(new Pose2d(60,-30,Math.toRadians(90)))
+                                .forward(5)
+                                .lineToLinearHeading(new Pose2d(48,-65,Math.toRadians(-90)))
+                                .forward(5)
+                                .lineToLinearHeading(new Pose2d(6,-36,Math.toRadians(90)))
+                                .forward(5)
+                                .lineToLinearHeading(new Pose2d(48,-60,Math.toRadians(0)))
                                 .build()
                 );
 
@@ -87,6 +90,21 @@ TrajectorySequence fwdHighCmbr = vvdrive.trajectorySequenceBuilder(startPose) //
                 .strafeRight(16)
                 .waitSeconds(0)
                 .build();
+
+                This is the Basket sequence
+                drive.trajectorySequenceBuilder(new Pose2d(-12, -65, Math.toRadians(90)))
+                                .forward(31)
+                                .back(8)
+                                .strafeTo(new Vector2d(-48,-42))
+                                .forward(5)
+                                .lineToLinearHeading(new Pose2d(-58,-60,Math.toRadians(50)))
+                                .lineToLinearHeading(new Pose2d(-58,-42,Math.toRadians(90)))
+                                .forward(5)
+                                .lineTo(new Vector2d(-58,-60))
+                                .lineToLinearHeading(new Pose2d(-58,-24,Math.toRadians(180)))
+                                .lineToLinearHeading(new Pose2d(-58,-60,Math.toRadians(90)))
+                                .splineToLinearHeading(new Pose2d(-24,-12),Math.toRadians(0))
+                                .build()
 
 
  */

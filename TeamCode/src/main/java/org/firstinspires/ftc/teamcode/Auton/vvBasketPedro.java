@@ -50,9 +50,9 @@ public class vvBasketPedro extends OpMode {
     private Pose startPose = new Pose(65, 7, Math.toRadians(90));
     // all sample mark locations
     private Pose highchamber = new Pose(65,33.5);
-    private Pose sampleMark1 = new Pose(22.5,27);
-    private Pose sampleMark2 = new Pose(19,27);
-    private Pose sampleMark3 = new Pose(15,27,Math.toRadians(180));
+    private Pose sampleMark1 = new Pose(32.5,27);
+    private Pose sampleMark2 = new Pose(22.5,27);
+    private Pose sampleMark3 = new Pose(12.5,27,Math.toRadians(180));
     private Pose dropposition = new Pose (16,16,Math.toRadians(45));
     private Pose specimenMark1 = new Pose(36+72, -45+72);
     private Pose specimenMark2 = new Pose(24.5+72, -45+72);
@@ -67,20 +67,18 @@ public class vvBasketPedro extends OpMode {
 
         //High Chamber travel path
         fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN),new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN))); //Tile Start Position
-        fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
-        fwdHighCmbr.setPathEndTimeoutConstraint(2);
+        //fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
+        //fwdHighCmbr.setPathEndTimeoutConstraint(0);
 
         //Path from submersible to the first yellow sample, approaches straight on after a sweep
         yellow1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(highchamber.getX(), highchamber.getY(),Point.CARTESIAN), new Point(sampleMark1.getX()+1,sampleMark1.getY()-17, Point.CARTESIAN)))
+                .addPath(new BezierCurve(new Point(highchamber.getX(), highchamber.getY(),Point.CARTESIAN), new Point(47,16, Point.CARTESIAN), new Point(sampleMark1.getX(),sampleMark1.getY()-botPickup, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
-                .addPath(new BezierLine(new Point(sampleMark1.getX()+1,sampleMark1.getY()-17, Point.CARTESIAN), new Point(sampleMark1.getX()+1,sampleMark1.getY()-botPickup, Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(startPose.getHeading())
-                .setPathEndTimeoutConstraint(2)
+                .setPathEndTimeoutConstraint(3)
                 .build();
 
         yellow1drop = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(sampleMark1.getX()+1,sampleMark1.getY()-botPickup, Point.CARTESIAN), new Point(dropposition.getX(),dropposition.getY(), Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(sampleMark1.getX(),sampleMark1.getY()-botPickup, Point.CARTESIAN), new Point(dropposition.getX(),dropposition.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(startPose.getHeading(),dropposition.getHeading(),0.5)
                 .setPathEndTimeoutConstraint(2)
                 .build();
@@ -94,7 +92,7 @@ public class vvBasketPedro extends OpMode {
         yellow2drop = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(sampleMark2.getX(),sampleMark2.getY()-botPickup, Point.CARTESIAN), new Point(dropposition.getX(),dropposition.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(startPose.getHeading(),dropposition.getHeading(),0.5)
-                .setPathEndTimeoutConstraint(2)
+                .setPathEndTimeoutConstraint(0)
                 .build();
 
         yellow3 = follower.pathBuilder()
@@ -102,19 +100,19 @@ public class vvBasketPedro extends OpMode {
                 .setLinearHeadingInterpolation(dropposition.getHeading(),sampleMark3.getHeading(),0.5)
                 .addPath(new BezierLine(new Point(sampleMark3.getX()+14,sampleMark3.getY(), Point.CARTESIAN), new Point(sampleMark3.getX()+botPickup,sampleMark3.getY(), Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(sampleMark3.getHeading())
-                .setPathEndTimeoutConstraint(2)
+                .setPathEndTimeoutConstraint(0)
                 .build();
 
         yellow3drop = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(sampleMark3.getX()-botPickup,sampleMark3.getY(), Point.CARTESIAN), new Point(dropposition.getX(),dropposition.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(sampleMark3.getHeading(),dropposition.getHeading(),0.5)
-                .setPathEndTimeoutConstraint(2)
+                .setPathEndTimeoutConstraint(0)
                 .build();
 
         ascent = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(dropposition.getX(), dropposition.getY(),Point.CARTESIAN), new Point(ascentPose.getX(),ascentPose.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(dropposition.getHeading(),ascentPose.getHeading(),0.5)
-                .setPathEndTimeoutConstraint(2)
+                .setPathEndTimeoutConstraint(0)
                 .build();
     }
 
@@ -126,51 +124,49 @@ public class vvBasketPedro extends OpMode {
                 //robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
                 robot.moveWristHighCw();
 
+                //if(robot.arm.getCurrentPosition()> robot.arm.getTargetPosition()-900){
                 setPathState(10);
                 break;
 
             case 10: //high chamber specimen placement
-                if (pathTimer.getElapsedTime() > 400) {
-                    follower.followPath(fwdHighCmbr);
+                follower.followPath(fwdHighCmbr);
 
-                    setPathState(11);
+                   if (follower.getCurrentTValue() > 0.1)
+                    {
+                        setPathState(11);
+                    }
 
                     break;
-                }
             case 11: // Yellow1
-                if (pathTimer.getElapsedTime() > 2000) {
-                    robot.armPos(robot.armHighCa - 250, 0.4);
-                    try {
-                        Thread.sleep(350);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    robot.openClaw();
+                if (pathTimer.getElapsedTime() > 1500) {
+                    robot.armPos(robot.armHighCa - 300, 0.4);
+                    if (robot.arm.getCurrentPosition()<robot.arm.getTargetPosition()+10) {
+                        robot.openClaw();}
+
                     //robot.extArmPos(50, robot.extArmEPower);
                     follower.followPath(yellow1);
 
-                    setPathState(12);
+                    if (follower.getCurrentTValue() > 0.1) {
+                    setPathState(12);}
 
                     break;
 
                 }
             case 12: //Yellow1pick
-                if (pathTimer.getElapsedTime() > 250) {
+                if (pathTimer.getElapsedTime() > 1000) {
                     robot.moveWristFloor();
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
-                    try {
-                        Thread.sleep(350);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+
+                    if (follower.getCurrentTValue() > 0.1 && pathTimer.getElapsedTime() > 2000) {
                     robot.closeClaw();
-                    setPathState(13);
+
+                    setPathState(13);}
 
                     break;
                 }
-            case 13: //Yellow1drop
-                if (pathTimer.getElapsedTime() > 500) {
+            /*case 13: //Yellow1drop
+                if (pathTimer.getElapsedTime() > 5000) {
                     robot.armPos(robot.armRearBa, robot.armEPower - 0.15); //
                     robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
                     robot.moveWristHighBw();
@@ -191,7 +187,7 @@ public class vvBasketPedro extends OpMode {
                     break;
                 }
             case 14: //Yellow2pick
-                if (pathTimer.getElapsedTime() > 250) {
+                if (!follower.isBusy() || pathTimer.getElapsedTime() > 2500) {
                     robot.moveWristFloor();
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
@@ -211,7 +207,7 @@ public class vvBasketPedro extends OpMode {
                     break;
                 }
             case 15: //Yellow2drop
-                if (pathTimer.getElapsedTime() > 500) {
+                if (!follower.isBusy() || pathTimer.getElapsedTime() > 5000) {
                     robot.armPos(robot.armRearBa, robot.armEPower - 0.15); //
                     robot.moveWristLowCW();
                     robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
@@ -233,7 +229,7 @@ public class vvBasketPedro extends OpMode {
                     break;
                 }
             case 16: //Yellow3pick
-                if (pathTimer.getElapsedTime() > 250) {
+                if (!follower.isBusy() ||pathTimer.getElapsedTime() > 2500) {
                     robot.moveWristFloor();
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
@@ -254,7 +250,7 @@ public class vvBasketPedro extends OpMode {
                     break;
                 }
             case 17: //Yellow3drop
-                if (pathTimer.getElapsedTime() > 500) {
+                if (!follower.isBusy() || pathTimer.getElapsedTime() > 5000) {
                     robot.armPos(robot.armRearBa, robot.armEPower - 0.15); //
                     robot.moveWristLowCW();
                     robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
@@ -276,7 +272,7 @@ public class vvBasketPedro extends OpMode {
                     break;
                 }
             case 18: //parking
-                if (pathTimer.getElapsedTime() > 500) {
+                if (!follower.isBusy() || pathTimer.getElapsedTime() > 5000) {
 
                     robot.closeClaw();
                     robot.moveWristCarry();
@@ -288,7 +284,7 @@ public class vvBasketPedro extends OpMode {
                     setPathState(100);
                     
                 break;
-                 }
+                 }*/
             case 100:
                 if (!follower.isBusy()) {
                     //setPathState(-1);

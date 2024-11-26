@@ -202,7 +202,7 @@ public class vvChamberPedro extends OpMode {
                 }
 
             case 11: // Sample 1 push
-                if (pathTimer.getElapsedTime() > 250) {
+                if (!follower.isBusy() || pathTimer.getElapsedTime() > 2500) {
                     robot.moveWristFloor();
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
