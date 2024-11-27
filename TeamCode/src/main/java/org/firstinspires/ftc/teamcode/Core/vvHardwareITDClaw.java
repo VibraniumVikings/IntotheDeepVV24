@@ -56,13 +56,13 @@ public class vvHardwareITDClaw {
     public static final double clawOpen       =  0.3 ; //Metal 0.65 3D Print 0.3
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = 0.45 ;
-    public static final double floorPick = 0.4 ; //Metal 0.1 3D Print 0.4
+    public static final double floorPick = 0.45 ; //Metal 0.1 3D Print 0.45
     public static final double floorCarry = 0.9 ;
     public static final double highCw  = 0.3 ;
     public static final double highCwNew  = 0.55 ;
     public static final double lowCW = 0.5 ;
     public static final double highBw = 0.2 ;
-    public static final double lowBw = 0.3 ;
+    public static final double lowBw = 0.35 ; //0.3 Metal
     public static final double lowWallCw = 0.4 ;
 
     final public int floorArm = 0;// 0 for metal, ~50 for claw?
@@ -72,8 +72,9 @@ public class vvHardwareITDClaw {
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
     final public int armRearBa = 2600; //Max arm is 3747, 2560 is vertical
-    final public int armFloorSub = 400; // 400 for metal, ~200 for claw?
-    final public int armWall = 350; //300
+    final public int armFloorSub = 325; // 400 for metal, 275 for claw?
+    final public int armFloorInt = 175; // 200 for metal
+    final public int armWall = 450; //300 Metal Practice
     final public int armAscent = 1500;
     final public double armEPower = 0.5;
     final public int extArmAscentGrab = 1450; //20" high is 1450
@@ -83,7 +84,8 @@ public class vvHardwareITDClaw {
     final public int extArmHighCe = 600;
     final public int extArmLowCe = 50;
     final public int extArmFloorSub= 1450;
-    final public int extArmFLoorPick = 290; //Metal 290, 3D Print 400
+    final public int extArmFLoorPick = 475; //Metal 290, 3D Print 475
+    final public int extArmFloorInt = 970; //Metal 580
     final public double extArmEPower = 0.4;
 
     final public double liftEPower = 0.5;

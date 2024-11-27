@@ -231,25 +231,25 @@ public class vvHardwareITDPedro {
         rightLift.setPower(liftEPower);
     }
     public void rearBasket() {
-        armPos(armRearBa, armEPower-0.15);
+        armPos(armRearBa, armEPower);
         moveWristLowCW();
         extArmPos(extArmHighBe, extArmEPower);
     }
     public void pickSample() {
         moveWristFloor();
         armPos(floorArm, armEPower);
-        extArmPos(extArmFLoorPick, armEPower);
+        extArmPos(extArmFLoorPick, extArmEPower);
     }
     public void wallPick() {
         moveWristWall();
         armPos(armWall, armEPower);
-        extArmPos(extArmLowCe, armEPower);
+        extArmPos(extArmLowCe, extArmEPower);
     }
     public void collapse() {
         closeClaw();
         moveWristCarry();
         armPos(floorArm, armEPower);
-        extArmPos(0, armEPower);
+        extArmPos(0, extArmEPower);
     }
     public void moveWristFloor() {
         wrist.setPosition(floorPick);

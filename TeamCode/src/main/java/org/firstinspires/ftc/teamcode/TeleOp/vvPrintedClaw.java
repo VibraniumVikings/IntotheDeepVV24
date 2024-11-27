@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Core.vvHardwareITDClaw;
  *
  */
 
-@TeleOp(name="vvPrintedClaw", group="2-TeleOp")
+@TeleOp(name="vvPrintedClaw", group="1-TeleOp")
 
 public class vvPrintedClaw extends LinearOpMode {
 
@@ -142,9 +142,9 @@ public class vvPrintedClaw extends LinearOpMode {
                     robot.moveWristCarry();
                 }
                 if (gamepad2.a) { //intermediate pick
-                    robot.armPos(200, robot.armEPower);
-                    robot.moveWristFloor();
-                    robot.extArmPos(580, robot.extArmEPower);
+                    robot.armPos(robot.armFloorInt, robot.armEPower);
+                    robot.moveWristLowBw();
+                    robot.extArmPos(robot.extArmFloorInt, robot.extArmEPower);
                 }
                 if (gamepad2.b) { //Wall pick
                     robot.armPos(robot.armWall, robot.armEPower);
@@ -154,11 +154,11 @@ public class vvPrintedClaw extends LinearOpMode {
                 if (gamepad2.dpad_down) { //Near floor pick
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
-                    robot.moveWristFloor();
+                    robot.moveWristLowBw();
                 }
                 if (gamepad2.dpad_right) { //Submersible pick
                     robot.armPos(robot.armFloorSub, robot.armEPower);
-                    robot.moveWristFloor();
+                    robot.moveWristLowBw();
                     robot.extArmPos(robot.extArmFloorSub, robot.extArmEPower);
                 }
 
@@ -173,9 +173,9 @@ public class vvPrintedClaw extends LinearOpMode {
                     robot.moveWristLowBw();
                 }*/
                 if (gamepad2.dpad_left) { //High Chamber
-                    robot.armPos(robot.armHighCaNew, robot.armEPower);
+                    robot.armPos(robot.armHighCa, robot.armEPower);
                     robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
-                    robot.moveWristHighCwNew();
+                    robot.moveWristHighCw();
                 }
                 /*if (gamepad2.dpad_down) { //Low Chamber
                     robot.armPos(robot.armLowCa, robot.armEPower);

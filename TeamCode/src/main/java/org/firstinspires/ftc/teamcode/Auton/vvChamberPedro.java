@@ -38,7 +38,7 @@ public class vvChamberPedro extends OpMode {
 
     private Path fwdHighCmbr;
 
-    private PathChain sample1, sample2Drop, samplePlace, obsZone;
+    private PathChain sample1, sample2, sample2Drop, samplePlace, obsZone;
 
     private int pathState;
 
@@ -46,33 +46,33 @@ public class vvChamberPedro extends OpMode {
     private Pose startPose = new Pose(79, 7, Math.toRadians(90));
     // all sample mark locations
     private Pose highchamber = new Pose(79,33.5);
-    private Pose sampleMark1 = new Pose(32.5,27);
-    private Pose sampleMark2 = new Pose(22.5,27);
-    private Pose sampleMark3 = new Pose(12.5,27,Math.toRadians(180));
+    private Pose sampleMark1 = new Pose(22.5,43);
+    private Pose sampleMark2 = new Pose(12.5,43);
+    private Pose sampleMark3 = new Pose(2.5,43,Math.toRadians(180));
     private Pose dropposition = new Pose (16,16,Math.toRadians(45));
-    private Pose specimenMark1 = new Pose(36+72, -45+72);
-    private Pose specimenMark2 = new Pose(24.5+72, -45+72);
-    private Pose specimenMark3 = new Pose(36+72, -45+72,Math.toRadians(0));
-    private Pose observationZone= new Pose(132,16, Math.toRadians(270));
+    private Pose specimenMark1 = new Pose(121.5, 43);
+    private Pose specimenMark2 = new Pose(131.5, 43);
+    private Pose specimenMark3 = new Pose(141.5, 43,Math.toRadians(0));
+    private Pose observationZone= new Pose(132,16, Math.toRadians(-90));
     //Kraken dimensional offsets
     public double botWidth = 7;
     public double botLength = 7;
     public double botPickup = 11;
 
     public boolean isHalfwayThere() {
-        return follower.getCurrentTValue() > 0.5;
+        return follower.getCurrentTValue() > 0.75;
     }
     public boolean atPathEnd() {
         return follower.getCurrentTValue() > 0.99;
     }
     public boolean isAtEndOfPathAndNotMoving() {
-        return atPathEnd() && follower.getVelocityMagnitude() < 0.01;
+        return atPathEnd() && follower.getVelocityMagnitude() < 0.1;
     }
     public boolean armSetUp() {
         return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()-10;
     }
     public boolean armSetDown() {
-        return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()+10;
+        return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()+5;
     }
 
     public void buildPaths() {
@@ -82,13 +82,17 @@ public class vvChamberPedro extends OpMode {
         fwdHighCmbr.setPathEndTimeoutConstraint(2);
 
         sample1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN), new Point(highchamber.getX()+25, highchamber.getY()-15, Point.CARTESIAN), new Point(specimenMark1.getX()-3, specimenMark1.getY()+17, Point.CARTESIAN)))
+                .addPath(new BezierCurve(new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN), new Point(108, 16, Point.CARTESIAN), new Point(specimenMark1.getX()-9, specimenMark1.getY()+15, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
-                .addPath(new BezierLine(new Point(specimenMark1.getX()-3, specimenMark1.getY()+17, Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(specimenMark1.getX()-9, specimenMark1.getY()+15, Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY()-botLength, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
-                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(specimenMark2.getX(),specimenMark2.getY()-botPickup, Point.CARTESIAN)))
+                .setPathEndTimeoutConstraint(5)
+                .build();
+
+        sample2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY()-botLength, Point.CARTESIAN), new Point(specimenMark2.getX(),specimenMark2.getY()-botPickup, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
-                .setPathEndTimeoutConstraint(3)
+                .setPathEndTimeoutConstraint(2)
                 .build();
 
         sample2Drop = follower.pathBuilder()
@@ -100,7 +104,7 @@ public class vvChamberPedro extends OpMode {
         samplePlace = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(observationZone.getHeading(),startPose.getHeading(),0.5)
-                .setPathEndTimeoutConstraint(2)
+                .setPathEndTimeoutConstraint(5)
                 .build();
 
         obsZone = follower.pathBuilder()
@@ -118,7 +122,7 @@ public class vvChamberPedro extends OpMode {
                 //robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
                 robot.moveWristHighCw();
 
-                if (robot.arm.getCurrentPosition() > robot.arm.getTargetPosition() - 900) {
+                if (pathTimer.getElapsedTime()>100) {
                     setPathState(10);
                 }
                 break;
@@ -126,7 +130,7 @@ public class vvChamberPedro extends OpMode {
             case 10: //high chamber specimen placement
                 follower.followPath(fwdHighCmbr);
 
-                if (isAtEndOfPathAndNotMoving()) {
+                if (pathTimer.getElapsedTime()>1500) {
                     setPathState(11);
                 }
 
@@ -135,16 +139,19 @@ public class vvChamberPedro extends OpMode {
             case 11: // Sample clip and sample 1 push to obszone
                 if (pathTimer.getElapsedTime() > 1000) {
                     robot.armPos(robot.armHighCa - 300, 0.4);
-                    if (pathTimer.getElapsedTime() > 1350) {
+                    if (pathTimer.getElapsedTime() > 1500) {
                         robot.openClaw();
                     }
 
                     //robot.extArmPos(50, robot.extArmEPower);
-                    if (pathTimer.getElapsedTime() > 1450) {
+                    if (pathTimer.getElapsedTime() > 1600) {
                         follower.followPath(sample1);
                     }
 
-                    if (atPathEnd()) {
+                    if (isHalfwayThere() && pathTimer.getElapsedTime() > 2500){
+                        robot.pickSample();
+                    }
+                    if (follower.atParametricEnd() && pathTimer.getElapsedTime()>5000) {
                         setPathState(12);
                     }
                 }
@@ -153,11 +160,12 @@ public class vvChamberPedro extends OpMode {
 
             case 12: // Sample 2 grab
                 if (pathTimer.getElapsedTime() > 100) {
-                    robot.pickSample();
+                    follower.followPath(sample2);
 
-                    if (pathTimer.getElapsedTime() > 300) { // && pathTimer.getElapsedTime() > 2000
+                    if (atPathEnd() && pathTimer.getElapsedTime() > 1000) { // && pathTimer.getElapsedTime() > 2000
                         robot.closeClaw();
-
+                    }
+                    if (atPathEnd() && pathTimer.getElapsedTime() > 2000) { // && pathTimer.getElapsedTime() > 2000
                         setPathState(13);
                     }
                 }
@@ -165,13 +173,17 @@ public class vvChamberPedro extends OpMode {
                 break;
 
             case 13: // Sample 2 drop
-                if (pathTimer.getElapsedTime() > 250) {
+                if (pathTimer.getElapsedTime() > 100) {
                     robot.wallPick();
 
                     follower.followPath(sample2Drop);
 
-                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                    if(isHalfwayThere()) {
                         robot.openClaw();
+                    }
+
+                    if (atPathEnd() && armSetUp() && pathTimer.getElapsedTime() > 2000) { //atPathEnd() &&
+
                         setPathState(14);
                     }
                 }
@@ -181,12 +193,12 @@ public class vvChamberPedro extends OpMode {
                 if (pathTimer.getElapsedTime() > 250) {
                     robot.closeClaw();
 
-                    if (pathTimer.getElapsedTime() > 500) {
+                    if (pathTimer.getElapsedTime() > 1000) {
                         robot.armPos(robot.armHighCa, robot.armEPower);
                         robot.moveWristHighCw();
                         follower.followPath(samplePlace);
                     }
-                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                    if (atPathEnd() && armSetUp() && pathTimer.getElapsedTime() > 2000) { //atPathEnd() && isAtEndOfPathAndNotMoving()
                         setPathState(15);
                     }
                 }
@@ -202,10 +214,10 @@ public class vvChamberPedro extends OpMode {
                     if (pathTimer.getElapsedTime() > 1450) {
                         follower.followPath(obsZone);
                     }
-                    if (pathTimer.getElapsedTime() > 2000) {
+                    if (pathTimer.getElapsedTime() > 1600) {
                         robot.wallPick(); }
 
-                    if (isAtEndOfPathAndNotMoving()) {
+                    if (atPathEnd() && pathTimer.getElapsedTime() > 4000) { //atPathEnd() &&
                         setPathState(16);
                     }
                 }
@@ -221,7 +233,7 @@ public class vvChamberPedro extends OpMode {
                         robot.moveWristHighCw();
                         follower.followPath(samplePlace);
                     }
-                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                    if (atPathEnd() && armSetUp() && pathTimer.getElapsedTime() > 2000) {
                         setPathState(17);
                     }
                 }
@@ -238,7 +250,7 @@ public class vvChamberPedro extends OpMode {
                         follower.followPath(obsZone);
                     }
 
-                    if (atPathEnd()) {
+                    if (atPathEnd() && pathTimer.getElapsedTime() > 2500) {
                         setPathState(18);
                     }
                 }
@@ -255,9 +267,9 @@ public class vvChamberPedro extends OpMode {
                 break;
 
         }
-            if (opmodeTimer.getElapsedTimeSeconds() > 28) {
+            /*if (opmodeTimer.getElapsedTimeSeconds() > 28) {
                 robot.collapse();
-            }
+            }*/
     }
 
 

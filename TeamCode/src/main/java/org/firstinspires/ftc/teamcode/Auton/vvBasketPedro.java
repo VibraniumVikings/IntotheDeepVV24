@@ -50,14 +50,14 @@ public class vvBasketPedro extends OpMode {
     private Pose startPose = new Pose(65, 7, Math.toRadians(90));
     // all sample mark locations
     private Pose highchamber = new Pose(65,33.5);
-    private Pose sampleMark1 = new Pose(32.5,27);
-    private Pose sampleMark2 = new Pose(22.5,27);
-    private Pose sampleMark3 = new Pose(12.5,27,Math.toRadians(180));
+    private Pose sampleMark1 = new Pose(22.5,43);
+    private Pose sampleMark2 = new Pose(12.5,43);
+    private Pose sampleMark3 = new Pose(2.5,43,Math.toRadians(180));
     private Pose dropposition = new Pose (16,16,Math.toRadians(45));
-    private Pose specimenMark1 = new Pose(36+72, -45+72);
-    private Pose specimenMark2 = new Pose(24.5+72, -45+72);
-    private Pose specimenMark3 = new Pose(36+72, -45+72,Math.toRadians(0));
-    private Pose ascentPose  = new Pose(48, 72, Math.toRadians(0));
+    private Pose specimenMark1 = new Pose(121.5, 43);
+    private Pose specimenMark2 = new Pose(131.5, 43);
+    private Pose specimenMark3 = new Pose(141.5, 43,Math.toRadians(0));
+    private Pose ascentPose  = new Pose(72, 72, Math.toRadians(0));
     //Kraken dimensional offsets
     public double botWidth = 7;
     public double botLength = 7;
@@ -69,14 +69,14 @@ public class vvBasketPedro extends OpMode {
     public boolean atPathEnd() {
         return follower.getCurrentTValue() > 0.99;
     }
-    public boolean isAtEndOfPathAndNotMoving() {
-        return atPathEnd() && follower.getVelocityMagnitude() < 0.01;
+    public boolean isAtEndOfPathAndNotMoving() { //Robot seems unstable with control, along with isBusy
+        return atPathEnd() && follower.getVelocityMagnitude() < 0.1;
     }
     public boolean armSetUp() {
         return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()-10;
     }
     public boolean armSetDown() {
-        return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()+10;
+        return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()+5;
     }
 
     public void buildPaths() {
@@ -112,15 +112,15 @@ public class vvBasketPedro extends OpMode {
                 .build();
 
         yellow3 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(dropposition.getX(), dropposition.getY(),Point.CARTESIAN), new Point(sampleMark3.getX()+14,sampleMark3.getY(), Point.CARTESIAN)))
+                .addPath(new BezierCurve(new Point(dropposition.getX(), dropposition.getY(),Point.CARTESIAN), new Point(dropposition.getX()+32, dropposition.getY()+24,Point.CARTESIAN), new Point(sampleMark3.getX()+16,sampleMark3.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(dropposition.getHeading(),sampleMark3.getHeading(),0.5)
-                .addPath(new BezierLine(new Point(sampleMark3.getX()+14,sampleMark3.getY(), Point.CARTESIAN), new Point(sampleMark3.getX()+botPickup,sampleMark3.getY(), Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(sampleMark3.getX()+16,sampleMark3.getY(), Point.CARTESIAN), new Point(sampleMark3.getX()+botPickup,sampleMark3.getY(), Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(sampleMark3.getHeading())
                 .setPathEndTimeoutConstraint(0)
                 .build();
 
         yellow3drop = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(sampleMark3.getX()-botPickup,sampleMark3.getY(), Point.CARTESIAN), new Point(dropposition.getX(),dropposition.getY(), Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(sampleMark3.getX()+botPickup,sampleMark3.getY(), Point.CARTESIAN), new Point(dropposition.getX(),dropposition.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(sampleMark3.getHeading(),dropposition.getHeading(),0.5)
                 .setPathEndTimeoutConstraint(0)
                 .build();
@@ -140,7 +140,7 @@ public class vvBasketPedro extends OpMode {
                 //robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
                 robot.moveWristHighCw();
 
-                if (robot.arm.getCurrentPosition() > robot.arm.getTargetPosition() - 900) {
+                if (pathTimer.getElapsedTime()>500) {
                     setPathState(10);
                 }
                 break;
@@ -148,7 +148,7 @@ public class vvBasketPedro extends OpMode {
             case 10: //high chamber specimen placement
                 follower.followPath(fwdHighCmbr);
 
-                if (isAtEndOfPathAndNotMoving()) {
+                if (pathTimer.getElapsedTime()>1500) {
                     setPathState(11);
                 }
 
@@ -157,16 +157,16 @@ public class vvBasketPedro extends OpMode {
             case 11: // Yellow1
                 if (pathTimer.getElapsedTime() > 1000) {
                     robot.armPos(robot.armHighCa - 300, 0.4);
-                    if (pathTimer.getElapsedTime() > 1350) {
+                    if (pathTimer.getElapsedTime() > 1500) {
                         robot.openClaw();
                     }
 
                     //robot.extArmPos(50, robot.extArmEPower);
-                    if (pathTimer.getElapsedTime() > 1450) {
+                    if (pathTimer.getElapsedTime() > 1600) {
                         follower.followPath(yellow1);
                     }
 
-                    if (atPathEnd()) {
+                    if (atPathEnd() && pathTimer.getElapsedTime()>2000) {
                         setPathState(12);
                     }
                 }
@@ -177,7 +177,7 @@ public class vvBasketPedro extends OpMode {
                 if (pathTimer.getElapsedTime() > 100) {
                     robot.pickSample();
 
-                    if (pathTimer.getElapsedTime() > 500) { // && pathTimer.getElapsedTime() > 2000
+                    if (armSetDown() && pathTimer.getElapsedTime() > 1000) { // && pathTimer.getElapsedTime() > 2000
                         robot.closeClaw();
 
                         setPathState(13);
@@ -192,7 +192,7 @@ public class vvBasketPedro extends OpMode {
 
                     follower.followPath(yellow1drop);
 
-                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                    if (atPathEnd() && armSetUp()) {
                         robot.openClaw();
                         setPathState(14);
                     }
@@ -206,7 +206,7 @@ public class vvBasketPedro extends OpMode {
 
                     follower.followPath(yellow2);
 
-                    if (atPathEnd() && armSetDown()) {
+                    if (armSetDown() && pathTimer.getElapsedTime()>2500) { //atPathEnd() && armSetDown() &&
                         robot.closeClaw();
 
                         setPathState(15);
@@ -221,7 +221,7 @@ public class vvBasketPedro extends OpMode {
 
                     follower.followPath(yellow2drop);
 
-                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                    if (atPathEnd() && armSetUp()) { //isAtEndOfPathAndNotMoving()
 
                         robot.openClaw();
 
@@ -233,11 +233,14 @@ public class vvBasketPedro extends OpMode {
 
             case 16: //Yellow3pick
                 if (pathTimer.getElapsedTime() > 300) {
-                    robot.pickSample();
+                    robot.moveWristHighBw();
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.extArmPos(robot.extArmFLoorPick, robot.armEPower);
+                    robot.openClaw();
 
                     follower.followPath(yellow3);
 
-                    if (atPathEnd() && armSetDown()) {
+                    if (follower.atParametricEnd() && pathTimer.getElapsedTime()>3000) { //atPathEnd() &&
                         robot.closeClaw();
 
                         setPathState(17);
@@ -252,11 +255,11 @@ public class vvBasketPedro extends OpMode {
 
                     follower.followPath(yellow3drop);
 
-                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                    if (atPathEnd() && armSetUp() && pathTimer.getElapsedTime()>2000) { //isAtEndOfPathAndNotMoving()
 
                         robot.openClaw();
 
-                        setPathState(16);
+                        setPathState(18);
                     }
                 }
 
@@ -267,12 +270,12 @@ public class vvBasketPedro extends OpMode {
 
                     robot.closeClaw();
                     robot.moveWristCarry();
+                    robot.armPos(robot.armAscent, robot.armEPower);
                     robot.extArmPos(0, robot.extArmEPower);
-                    robot.armPos(robot.armAscent, robot.extArmEPower);
 
                     follower.followPath(ascent);
 
-                    if (atPathEnd()) {
+                    if (atPathEnd() && pathTimer.getElapsedTime()>2500) {
 
                         setPathState(100);
                     }
@@ -281,7 +284,7 @@ public class vvBasketPedro extends OpMode {
                     break;
 
             case 100:
-                if (pathTimer.getElapsedTime() > 300) {
+                if (pathTimer.getElapsedTime() > 500) {
                     follower.holdPoint(ascentPose);
                 }
                 break;
@@ -291,7 +294,7 @@ public class vvBasketPedro extends OpMode {
                 break;
 
         }
-        if (opmodeTimer.getElapsedTimeSeconds() > 28) {
+        if (opmodeTimer.getElapsedTimeSeconds() > 28 && robot.arm.getCurrentPosition()<robot.armAscent-10) {
             robot.collapse();
         }
     }
