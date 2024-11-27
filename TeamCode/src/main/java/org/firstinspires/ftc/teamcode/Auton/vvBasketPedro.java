@@ -63,12 +63,28 @@ public class vvBasketPedro extends OpMode {
     public double botLength = 7;
     public double botPickup = 11;
 
+    public boolean isHalfwayThere() {
+        return follower.getCurrentTValue() > 0.5;
+    }
+    public boolean atPathEnd() {
+        return follower.getCurrentTValue() > 0.99;
+    }
+    public boolean isAtEndOfPathAndNotMoving() {
+        return atPathEnd() && follower.getVelocityMagnitude() < 0.01;
+    }
+    public boolean armSetUp() {
+        return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()-10;
+    }
+    public boolean armSetDown() {
+        return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()+10;
+    }
+
     public void buildPaths() {
 
         //High Chamber travel path
         fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN),new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN))); //Tile Start Position
-        //fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
-        //fwdHighCmbr.setPathEndTimeoutConstraint(0);
+        fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
+        fwdHighCmbr.setPathEndTimeoutConstraint(2);
 
         //Path from submersible to the first yellow sample, approaches straight on after a sweep
         yellow1 = follower.pathBuilder()
@@ -124,155 +140,130 @@ public class vvBasketPedro extends OpMode {
                 //robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
                 robot.moveWristHighCw();
 
-                //if(robot.arm.getCurrentPosition()> robot.arm.getTargetPosition()-900){
-                setPathState(10);
+                if (robot.arm.getCurrentPosition() > robot.arm.getTargetPosition() - 900) {
+                    setPathState(10);
+                }
                 break;
 
             case 10: //high chamber specimen placement
                 follower.followPath(fwdHighCmbr);
 
-                   if (follower.getCurrentTValue() > 0.1)
-                    {
-                        setPathState(11);
-                    }
+                if (isAtEndOfPathAndNotMoving()) {
+                    setPathState(11);
+                }
 
-                    break;
+                break;
+
             case 11: // Yellow1
-                if (pathTimer.getElapsedTime() > 1500) {
+                if (pathTimer.getElapsedTime() > 1000) {
                     robot.armPos(robot.armHighCa - 300, 0.4);
-                    if (robot.arm.getCurrentPosition()<robot.arm.getTargetPosition()+10) {
-                        robot.openClaw();}
+                    if (pathTimer.getElapsedTime() > 1350) {
+                        robot.openClaw();
+                    }
 
                     //robot.extArmPos(50, robot.extArmEPower);
-                    follower.followPath(yellow1);
+                    if (pathTimer.getElapsedTime() > 1450) {
+                        follower.followPath(yellow1);
+                    }
 
-                    if (follower.getCurrentTValue() > 0.1) {
-                    setPathState(12);}
-
-                    break;
-
+                    if (atPathEnd()) {
+                        setPathState(12);
+                    }
                 }
+
+                break;
+
             case 12: //Yellow1pick
-                if (pathTimer.getElapsedTime() > 1000) {
-                    robot.moveWristFloor();
-                    robot.armPos(robot.floorArm, robot.armEPower);
-                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
+                if (pathTimer.getElapsedTime() > 100) {
+                    robot.pickSample();
 
-                    if (follower.getCurrentTValue() > 0.1 && pathTimer.getElapsedTime() > 2000) {
-                    robot.closeClaw();
+                    if (pathTimer.getElapsedTime() > 500) { // && pathTimer.getElapsedTime() > 2000
+                        robot.closeClaw();
 
-                    setPathState(13);}
+                        setPathState(13);
+                    }
+                }
 
                     break;
-                }
-            /*case 13: //Yellow1drop
-                if (pathTimer.getElapsedTime() > 5000) {
-                    robot.armPos(robot.armRearBa, robot.armEPower - 0.15); //
-                    robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
-                    robot.moveWristHighBw();
+
+            case 13: //Yellow1drop
+                if (pathTimer.getElapsedTime() > 100) {
+                    robot.rearBasket();
 
                     follower.followPath(yellow1drop);
-                    
-                    if(!follower.isBusy()){
-                        try {
-                            Thread.sleep(350);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        robot.openClaw();
-                    }
-                    
-                    setPathState(14);
 
-                    break;
+                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                        robot.openClaw();
+                        setPathState(14);
+                    }
                 }
+
+                break;
+
             case 14: //Yellow2pick
-                if (!follower.isBusy() || pathTimer.getElapsedTime() > 2500) {
-                    robot.moveWristFloor();
-                    robot.armPos(robot.floorArm, robot.armEPower);
-                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
+                if (pathTimer.getElapsedTime() > 300) {
+                    robot.pickSample();
 
                     follower.followPath(yellow2);
-                    
-                    if(!follower.isBusy()){
-                        try {
-                            Thread.sleep(350);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        robot.closeClaw();
-                    }
-                    setPathState(15);
 
-                    break;
+                    if (atPathEnd() && armSetDown()) {
+                        robot.closeClaw();
+
+                        setPathState(15);
+                    }
                 }
+
+                break;
+
             case 15: //Yellow2drop
-                if (!follower.isBusy() || pathTimer.getElapsedTime() > 5000) {
-                    robot.armPos(robot.armRearBa, robot.armEPower - 0.15); //
-                    robot.moveWristLowCW();
-                    robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
-                    robot.moveWristHighBw();
+                if (pathTimer.getElapsedTime() > 100) {
+                    robot.rearBasket();
 
                     follower.followPath(yellow2drop);
-                    
-                    if(!follower.isBusy()){
-                        try {
-                            Thread.sleep(350);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+
+                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+
                         robot.openClaw();
+
+                        setPathState(16);
                     }
-                    
-                    setPathState(16);
+                }
 
                     break;
-                }
+
             case 16: //Yellow3pick
-                if (!follower.isBusy() ||pathTimer.getElapsedTime() > 2500) {
-                    robot.moveWristFloor();
-                    robot.armPos(robot.floorArm, robot.armEPower);
-                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
+                if (pathTimer.getElapsedTime() > 300) {
+                    robot.pickSample();
 
                     follower.followPath(yellow3);
-                    
-                    if(!follower.isBusy()){
-                        try {
-                            Thread.sleep(350);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+
+                    if (atPathEnd() && armSetDown()) {
                         robot.closeClaw();
+
+                        setPathState(17);
                     }
-                    
-                    setPathState(17);
+                }
 
                     break;
-                }
+
             case 17: //Yellow3drop
-                if (!follower.isBusy() || pathTimer.getElapsedTime() > 5000) {
-                    robot.armPos(robot.armRearBa, robot.armEPower - 0.15); //
-                    robot.moveWristLowCW();
-                    robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
-                    robot.moveWristHighBw();
+                if (pathTimer.getElapsedTime() > 100) {
+                    robot.rearBasket();
 
                     follower.followPath(yellow3drop);
-                    
-                    if(!follower.isBusy()){
-                        try {
-                            Thread.sleep(350);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+
+                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+
                         robot.openClaw();
+
+                        setPathState(16);
                     }
-                    
-                    setPathState(18);
+                }
 
                     break;
-                }
+
             case 18: //parking
-                if (!follower.isBusy() || pathTimer.getElapsedTime() > 5000) {
+                if (pathTimer.getElapsedTime() > 300) {
 
                     robot.closeClaw();
                     robot.moveWristCarry();
@@ -280,14 +271,18 @@ public class vvBasketPedro extends OpMode {
                     robot.armPos(robot.armAscent, robot.extArmEPower);
 
                     follower.followPath(ascent);
-                    
-                    setPathState(100);
-                    
-                break;
-                 }*/
+
+                    if (atPathEnd()) {
+
+                        setPathState(100);
+                    }
+                }
+
+                    break;
+
             case 100:
-                if (!follower.isBusy()) {
-                    //setPathState(-1);
+                if (pathTimer.getElapsedTime() > 300) {
+                    follower.holdPoint(ascentPose);
                 }
                 break;
 
@@ -296,64 +291,11 @@ public class vvBasketPedro extends OpMode {
                 break;
 
         }
+        if (opmodeTimer.getElapsedTimeSeconds() > 28) {
+            robot.collapse();
+        }
     }
 
-                /*follower.followPath(yellow1);
-                //robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
-                robot.closeClaw();
-                sleep(100);
-                follower.followPath(yellow1Drop);
-                //robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
-                sleep(250);
-                robot.openClaw();
-                sleep(100);
-                follower.followPath(yellow2);
-                sleep(100);
-                robot.closeClaw();
-                sleep(100);
-                follower.followPath(yellow2Drop);
-                sleep(350);
-                robot.openClaw();
-                sleep(150);
-                robot.closeClaw();
-                robot.moveWristFloor();
-                robot.extArmPos(50, robot.armEPower);
-                follower.followPath(yellow3);
-                sleep(100);
-                robot.closeClaw();
-                sleep(100);
-                follower.followPath(yellow3Drop);
-                sleep(100);
-                robot.openClaw();
-                sleep(250);
-                robot.closeClaw();
-                robot.moveWristFloor();
-                follower.followPath(ascentPark);
-                sleep(500);
-                robot.led.setPosition(0);
-                robot.rgb.setPosition(0.29);
-                sleep(500); //cutting out early due to time
-                vvdrive.followTrajectorySequence(yellow2Drop);
-                robot.openClaw();
-                sleep(500);
-                vvdrive.followTrajectorySequence(ascentPark);
-                robot.closeClaw();
-                sleep(500);
-                robot.armPos(0,robot.armEPower);
-                robot.moveWristCarry();
-                robot.extArmPos(0,robot.extArmEPower);
-                robot.rgb.setPosition(0.29);
-                sleep(1000);
-                telemetry.addData("path state", pathState);
-                telemetry.addData("x", follower.getPose().getX());
-                telemetry.addData("y", follower.getPose().getY());
-                telemetry.update();
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                break;*/
     @Override
     public void loop() {
 
@@ -390,7 +332,8 @@ public class vvBasketPedro extends OpMode {
         telemetry.update();
 
     }
-    public void setPathState(int state) {
+
+    public void setPathState (int state) {
         pathState = state;
         pathTimer.resetTimer();
         autonPathUpdate();

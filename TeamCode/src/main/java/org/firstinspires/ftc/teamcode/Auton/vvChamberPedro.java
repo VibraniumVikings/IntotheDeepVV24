@@ -38,149 +38,78 @@ public class vvChamberPedro extends OpMode {
 
     private Path fwdHighCmbr;
 
-    private PathChain sample1, sample1drop,sample2, sample2Drop,sample1pick, sample1Place, sample2Pick, sample2Place, obsZone;
+    private PathChain sample1, sample2Drop, samplePlace, obsZone;
 
     private int pathState;
 
     // We want to start the bot at x: 14, y: -60, heading: 90 degrees
-    private Pose startPose = new Pose(7+72, -65+72, Math.toRadians(90));
+    private Pose startPose = new Pose(79, 7, Math.toRadians(90));
     // all sample mark locations
-    private Pose DropPosition = new Pose (16,16);
-    private Pose sampleMark1 = new Pose(122,27);
-    private Pose sampleMark2 = new Pose(132,27);
-    private Pose sampleMark3 = new Pose(142,27);
-    private Pose specimenMark1 = new Pose(79, 27);
-    private Pose specimenMark2 = new Pose(75, 27);
-    private Pose specimenMark3 = new Pose(102, 27);
-    private Pose observationZone= new Pose(132,16);
+    private Pose highchamber = new Pose(79,33.5);
+    private Pose sampleMark1 = new Pose(32.5,27);
+    private Pose sampleMark2 = new Pose(22.5,27);
+    private Pose sampleMark3 = new Pose(12.5,27,Math.toRadians(180));
+    private Pose dropposition = new Pose (16,16,Math.toRadians(45));
+    private Pose specimenMark1 = new Pose(36+72, -45+72);
+    private Pose specimenMark2 = new Pose(24.5+72, -45+72);
+    private Pose specimenMark3 = new Pose(36+72, -45+72,Math.toRadians(0));
+    private Pose observationZone= new Pose(132,16, Math.toRadians(270));
     //Kraken dimensional offsets
     public double botWidth = 7;
     public double botLength = 7;
     public double botPickup = 11;
 
+    public boolean isHalfwayThere() {
+        return follower.getCurrentTValue() > 0.5;
+    }
+    public boolean atPathEnd() {
+        return follower.getCurrentTValue() > 0.99;
+    }
+    public boolean isAtEndOfPathAndNotMoving() {
+        return atPathEnd() && follower.getVelocityMagnitude() < 0.01;
+    }
+    public boolean armSetUp() {
+        return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()-10;
+    }
+    public boolean armSetDown() {
+        return robot.arm.getCurrentPosition()>robot.arm.getTargetPosition()+10;
+    }
+
     public void buildPaths() {
 
-        fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN), new Point(7 + 72, -38.5 + 72, Point.CARTESIAN))); //Tile Start Position
+        fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN), new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN))); //Tile Start Position
         fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
-        fwdHighCmbr.setPathEndTimeoutConstraint(3);
+        fwdHighCmbr.setPathEndTimeoutConstraint(2);
 
         sample1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(7 + 72, -38.5 + 72), new Point(specimenMark1.getX()+1, specimenMark1.getY()-17, Point.CARTESIAN)))
+                .addPath(new BezierCurve(new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN), new Point(highchamber.getX()+25, highchamber.getY()-15, Point.CARTESIAN), new Point(specimenMark1.getX()-3, specimenMark1.getY()+17, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
-                .addPath(new BezierLine(new Point(sampleMark1.getX()+1,sampleMark1.getY()-17, Point.CARTESIAN), new Point(sampleMark1.getX()+1,sampleMark1.getY()-6, Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(specimenMark1.getX()-3, specimenMark1.getY()+17, Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
-                .setPathEndTimeoutConstraint(0)
+                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(specimenMark2.getX(),specimenMark2.getY()-botPickup, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(startPose.getHeading())
+                .setPathEndTimeoutConstraint(3)
                 .build();
 
-        sample1drop = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenMark1.getX(),specimenMark1.getY(), Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(specimenMark1.getHeading()+180)
-                .setPathEndTimeoutConstraint(0)
+        sample2Drop = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimenMark2.getX(),specimenMark2.getY()-botPickup, Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
+                .setLinearHeadingInterpolation(startPose.getHeading(),observationZone.getHeading(),0.5)
+                .setPathEndTimeoutConstraint(2)
                 .build();
 
-        sample2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(specimenMark2.getX(),specimenMark2.getY(), Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(observationZone.getHeading()+180)
-                .setPathEndTimeoutConstraint(0)
+        samplePlace = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN)))
+                .setLinearHeadingInterpolation(observationZone.getHeading(),startPose.getHeading(),0.5)
+                .setPathEndTimeoutConstraint(2)
                 .build();
 
-        sample1pick = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenMark2.getX(),specimenMark2.getY(), Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(specimenMark2.getHeading()+180)
-                .setPathEndTimeoutConstraint(0)
-                .build();
-
-        sample1Place = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(7 + 72,-36 + 72, Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(observationZone.getHeading()+180)
-                .setPathEndTimeoutConstraint(0)
-                .build();
-
-        sample2Pick = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(7 + 72,-36 + 72, Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(observationZone.getHeading()+180)
-                .setPathEndTimeoutConstraint(0)
-                .build();
-
-        sample2Place = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(7 + 72,-38 + 72, Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(observationZone.getHeading()+180)
-                .setPathEndTimeoutConstraint(0)
+        obsZone = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
+                .setLinearHeadingInterpolation(startPose.getHeading(),observationZone.getHeading(),0.5)
+                .setPathEndTimeoutConstraint(2)
                 .build();
     }
 
-
-
-        /*  MeepMeep            .forward(31)
-                                .back(16)
-                                .lineToLinearHeading(new Pose2d(34,-36,Math.toRadians(90)))
-                                .lineToLinearHeading(new Pose2d(40,-6,Math.toRadians(90)))
-                                .lineToLinearHeading(new Pose2d(48,-60,Math.toRadians(90)))
-                                .lineToLinearHeading(new Pose2d(60,-30,Math.toRadians(90)))
-                                .forward(5)
-                                .lineToLinearHeading(new Pose2d(48,-65,Math.toRadians(-90)))
-                                .forward(5)
-                                .lineToLinearHeading(new Pose2d(6,-36,Math.toRadians(90)))
-                                .forward(5)
-                                .lineToLinearHeading(new Pose2d(48,-60,Math.toRadians(90)))
-        
-        TrajectorySequence sample1  = vvdrive.trajectorySequenceBuilder(fwdHighChmbr.end())
-                //.setConstraints(robot.hspdv,robot.hspda)
-                .back(8)
-                .lineTo(new Vector2d(63,-36))
-                .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
-                    robot.closeClaw();
-                    robot.extArmPos(robot.extArmFLoorPick+50, robot.extArmEPower);
-                    robot.armPos(robot.floorArm, robot.armEPower);
-                    robot.moveWristCarry();
-                     })
-                .lineTo(new Vector2d(85,-10))
-                .lineTo(new Vector2d(102,-10))
-                .lineTo(new Vector2d(117,-55))
-                .lineTo(new Vector2d(140,-33))
-                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    robot.moveWristFloor();
-                    robot.openClaw();
-                    })
-                .forward(4)
-                .waitSeconds(0.25)
-                .build();
-        TrajectorySequence sample2 = vvdrive.trajectorySequenceBuilder(sample1.end())
-                //.resetConstraints()
-                .lineToLinearHeading(new Pose2d(135,-47,Math.toRadians(225)))
-                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    robot.armPos(robot.armWall, robot.armEPower);
-                    robot.moveWristWall();
-                    robot.extArmPos(robot.extArmLowCe, robot.extArmEPower); })
-                .turn(Math.toRadians(45))
-                .forward (15.5)
-                .UNSTABLE_addTemporalMarkerOffset(-0.65, () -> {
-                    robot.openClaw();
-                })
-                .waitSeconds(0)
-                .build();
-        TrajectorySequence sample1Place = vvdrive.trajectorySequenceBuilder(sample2.end())
-                .back(6)
-                .turn(Math.toRadians(-90))
-                .lineToLinearHeading(new Pose2d(70,-45,Math.toRadians(90)))
-                .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
-                    robot.armPos(robot.armHighCa, robot.armEPower);
-                    robot.moveWristHighCw();
-                    robot.extArmPos(robot.extArmHighCe,robot.extArmEPower );
-                })
-                .waitSeconds(0)
-                .build();
-        TrajectorySequence park = vvdrive.trajectorySequenceBuilder(sample1Place.end())
-                //.lineToLinearHeading(new Pose2d(120,-52,Math.toRadians(0)))
-                .lineTo(new Vector2d(120,-55))
-                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    robot.closeClaw();
-                    robot.armPos(robot.floorArm, robot.armEPower);
-                    robot.moveWristCarry();
-                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower); })
-                .waitSeconds(0)
-                .build();
-        */
         public void autonPathUpdate() {
         switch (pathState){
             case 9: //move arm to position
@@ -189,90 +118,149 @@ public class vvChamberPedro extends OpMode {
                 //robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
                 robot.moveWristHighCw();
 
-                setPathState(10);
+                if (robot.arm.getCurrentPosition() > robot.arm.getTargetPosition() - 900) {
+                    setPathState(10);
+                }
                 break;
 
             case 10: //high chamber specimen placement
-                if (pathTimer.getElapsedTime() > 400) {
-                    follower.followPath(fwdHighCmbr);
+                follower.followPath(fwdHighCmbr);
 
+                if (isAtEndOfPathAndNotMoving()) {
                     setPathState(11);
-
-                    break;
                 }
 
-            case 11: // Sample 1 push
-                if (!follower.isBusy() || pathTimer.getElapsedTime() > 2500) {
-                    robot.moveWristFloor();
-                    robot.armPos(robot.floorArm, robot.armEPower);
-                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
-                    try {
-                        Thread.sleep(350);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                break;
+
+            case 11: // Sample clip and sample 1 push to obszone
+                if (pathTimer.getElapsedTime() > 1000) {
+                    robot.armPos(robot.armHighCa - 300, 0.4);
+                    if (pathTimer.getElapsedTime() > 1350) {
+                        robot.openClaw();
                     }
-                    //setPathState(-1);
-                    break;
+
+                    //robot.extArmPos(50, robot.extArmEPower);
+                    if (pathTimer.getElapsedTime() > 1450) {
+                        follower.followPath(sample1);
+                    }
+
+                    if (atPathEnd()) {
+                        setPathState(12);
+                    }
                 }
+
+                break;
 
             case 12: // Sample 2 grab
-                if (pathTimer.getElapsedTime() > 250) {
-                    robot.moveWristFloor();
-                    robot.armPos(robot.floorArm, robot.armEPower);
-                    robot.extArmPos(robot.extArmFLoorPick, robot.extArmEPower);
-                    try {
-                        Thread.sleep(350);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                if (pathTimer.getElapsedTime() > 100) {
+                    robot.pickSample();
+
+                    if (pathTimer.getElapsedTime() > 300) { // && pathTimer.getElapsedTime() > 2000
+                        robot.closeClaw();
+
+                        setPathState(13);
                     }
-                    break;
                 }
+
+                break;
 
             case 13: // Sample 2 drop
                 if (pathTimer.getElapsedTime() > 250) {
-                    robot.moveWristWall();
-                    robot.armPos(robot.armWall, robot.armEPower);
+                    robot.wallPick();
 
-                    try {
-                        Thread.sleep(350);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    follower.followPath(sample2Drop);
+
+                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                        robot.openClaw();
+                        setPathState(14);
                     }
-                    robot.openClaw();
                 }
                 break;
 
-            case 14: // Specimen grab
+            case 14: // Specimen 1 grab and chamber placement
                 if (pathTimer.getElapsedTime() > 250) {
-                    try {
-                        Thread.sleep(350);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    robot.closeClaw();
+
+                    if (pathTimer.getElapsedTime() > 500) {
+                        robot.armPos(robot.armHighCa, robot.armEPower);
+                        robot.moveWristHighCw();
+                        follower.followPath(samplePlace);
                     }
-                    robot.openClaw();
+                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                        setPathState(15);
+                    }
                 }
                 break;
 
-            case 15: // Specimen place
+            case 15: // Specimen 1 place
+                if (pathTimer.getElapsedTime() > 1000) {
+                    robot.armPos(robot.armHighCa - 300, 0.4);
+                    if (pathTimer.getElapsedTime() > 1350) {
+                        robot.openClaw();
+                    }
+
+                    if (pathTimer.getElapsedTime() > 1450) {
+                        follower.followPath(obsZone);
+                    }
+                    if (pathTimer.getElapsedTime() > 2000) {
+                        robot.wallPick(); }
+
+                    if (isAtEndOfPathAndNotMoving()) {
+                        setPathState(16);
+                    }
+                }
+
+                break;
+
+            case 16: // Specimen 2 grab and chamber placement
                 if (pathTimer.getElapsedTime() > 250) {
-                    robot.moveWristHighCw();
-                    robot.armPos(robot.armHighCa, robot.armEPower);
-                    robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
-                    try {
-                        Thread.sleep(350);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    robot.closeClaw();
+
+                    if (pathTimer.getElapsedTime() > 500) {
+                        robot.armPos(robot.armHighCa, robot.armEPower);
+                        robot.moveWristHighCw();
+                        follower.followPath(samplePlace);
                     }
-                    robot.openClaw();
+                    if (isAtEndOfPathAndNotMoving() && armSetUp()) {
+                        setPathState(17);
+                    }
                 }
                 break;
 
-                    default:
+            case 17: // Specimen 2 place
+                if (pathTimer.getElapsedTime() > 1000) {
+                    robot.armPos(robot.armHighCa - 300, 0.4);
+                    if (pathTimer.getElapsedTime() > 1350) {
+                        robot.openClaw();
+                    }
+
+                    if (pathTimer.getElapsedTime() > 1450) {
+                        follower.followPath(obsZone);
+                    }
+
+                    if (atPathEnd()) {
+                        setPathState(18);
+                    }
+                }
+
+                break;
+
+            case 18: //obszone and collapse
+                if (pathTimer.getElapsedTime() > 50) {
+                    robot.collapse(); }
+                break;
+
+            default:
                 requestOpModeStop();
                 break;
 
         }
+            if (opmodeTimer.getElapsedTimeSeconds() > 28) {
+                robot.collapse();
+            }
     }
+
+
     @Override
     public void loop() {
 
@@ -328,50 +316,3 @@ public class vvChamberPedro extends OpMode {
     public void stop() {
     }
 }
-/*
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-
-                Pose2d poseEstimate = vvdrive.getPoseEstimate();
-                vvdrive.update();
-
-                robot.rgb.setPosition(0.5);
-                telemetry.addData("Parallel Position: ", poseEstimate.getX());
-                telemetry.addData("Perpendicular Position: ", poseEstimate.getY());
-                telemetry.update();
-                robot.armPos(robot.armHighCa+100, robot.armEPower+0.3);
-                robot.moveWristHighCw();
-                vvdrive.followTrajectorySequence(fwdHighChmbr);
-                sleep(200);
-                robot.armPos(robot.armHighCa-250,0.4);
-                sleep(350);
-                robot.openClaw();
-                sleep(100);
-                vvdrive.followTrajectorySequence(sample1);
-                sleep(50);
-                robot.closeClaw();
-                sleep(50);
-                vvdrive.followTrajectorySequence(sample2);
-                sleep(350);
-                robot.closeClaw();
-                sleep(50);
-                vvdrive.followTrajectorySequence(sample1Place);
-                sleep(100);
-                robot.armPos(robot.armHighCa-250,0.4);
-                sleep(350);
-                robot.openClaw();
-                sleep(100);
-                vvdrive.followTrajectorySequence(park);
-                robot.led.setPosition(0);
-                robot.rgb.setPosition(0.29);
-                sleep(500);
-                telemetry.addData("Parallel Position: ", poseEstimate.getX());
-                telemetry.addData("Perpendicular Position: ", poseEstimate.getY());
-                telemetry.update();
-
-                break;
-            }
-        }
-    }
-}*/
-

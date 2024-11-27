@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /** This class is nearly identical to vvHardwareITD, except there are differences due to the auton starting position difference */
 
 public class vvHardwareITDPedro {
@@ -227,6 +230,27 @@ public class vvHardwareITDPedro {
         leftLift.setPower(liftEPower);
         rightLift.setPower(liftEPower);
     }
+    public void rearBasket() {
+        armPos(armRearBa, armEPower-0.15);
+        moveWristLowCW();
+        extArmPos(extArmHighBe, extArmEPower);
+    }
+    public void pickSample() {
+        moveWristFloor();
+        armPos(floorArm, armEPower);
+        extArmPos(extArmFLoorPick, armEPower);
+    }
+    public void wallPick() {
+        moveWristWall();
+        armPos(armWall, armEPower);
+        extArmPos(extArmLowCe, armEPower);
+    }
+    public void collapse() {
+        closeClaw();
+        moveWristCarry();
+        armPos(floorArm, armEPower);
+        extArmPos(0, armEPower);
+    }
     public void moveWristFloor() {
         wrist.setPosition(floorPick);
     }
@@ -264,6 +288,25 @@ public class vvHardwareITDPedro {
         rgb.setPosition(0.5);
         led.setPosition(0);
     }
+    /*
+    public void Kraken() {
+        telemetry.addData(">", "Robot Running");
+        telemetry.addData("Drive Power", drivePower);
+        //telemetry.addData("Y", driveY);
+        //telemetry.addData("strafe", strafe);
+        //telemetry.addData("turn", turn);
+        telemetry.addData("Y Encoder",y);
+        telemetry.addData("X Encoder",x);
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+        telemetry.addData("Arm Position", robot.arm.getCurrentPosition());
+        telemetry.addData("Extend Position", robot.extend.getCurrentPosition());
+        telemetry.addData("Left Lift Position", robot.leftLift.getCurrentPosition());
+        telemetry.addData("Right Lift Position", robot.rightLift.getCurrentPosition());
+        telemetry.addData("Wrist", wristPos);
+        telemetry.addData("Claw", clawPos);
+
+        telemetry.update();
+    }*/
 
 }
 
