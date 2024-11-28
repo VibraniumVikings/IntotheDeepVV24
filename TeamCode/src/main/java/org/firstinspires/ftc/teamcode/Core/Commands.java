@@ -7,7 +7,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
-import org.firstinspires.ftc.teamcode.auto.AutonomousRobot;
+import org.firstinspires.ftc.teamcode.Core.vvHardwareITDPedro;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
@@ -26,30 +26,27 @@ public class Commands {
     public static FollowPathFast fastPath(Follower follower, Path path) { return new FollowPathFast(follower, path); }
     public static FollowPathFast fastPath(Follower follower, PathChain path) { return new FollowPathFast(follower, path); }
 
-    // Intake Commands ---------------------------------------------------------------------------------------------------
+    // Pickup Commands ---------------------------------------------------------------------------------------------------
 
     // Extend into various states
-    public static InstantCommand RotateClaw45Degrees(AutonomousRobot robot) { return new InstantCommand(robot::clawTo45Degrees); }
-    public static InstantCommand RotateClaw45DegreesCCW(AutonomousRobot robot) { return new InstantCommand(robot::clawToNeg45Degrees); }
-    public static Command ExtendIntakeToGripSample(AutonomousRobot robot) { return new ExtendIntakeToGripSample(robot); }
-    public static Command ExtendIntakeToGripSpecimen(AutonomousRobot robot) { return new ExtendIntakeToGripSpecimen(robot); }
-    public static Command RotateClaw(AutonomousRobot robot, double degrees) { return new RotateClaw(robot, degrees); }
+    public static InstantCommand closeClaw(vvHardwareITDPedro robot) { return new InstantCommand(robot::closeClaw); }
+    public static InstantCommand openClaw(vvHardwareITDPedro robot) { return new InstantCommand(robot::openClaw); }
 
     // Sample & Specimen Grab Function
-    public static Command GrabGameObjectWithIntake(AutonomousRobot robot) { return new GrabGameObjectWithIntake(robot); }
-    public static Command Hold(AutonomousRobot robot) { return new Hold(robot); }
-    public static Command Release(AutonomousRobot robot) { return new Release(robot); }
+    public static Command pickSample(vvHardwareITDPedro robot) { return new pickSample(robot); }
+    public static Command Hold(vvHardwareITDPedro robot) { return new Hold(robot); }
+    public static Command Release(vvHardwareITDPedro robot) { return new Release(robot); }
 
-    // Retract the intake and end when a transfer is possible, doesn't actually transfer
-    public static Command RetractIntakeForTransfer(AutonomousRobot robot) { return new RetractIntakeForTransfer(robot); }
+    // Carry and collapse
+    public static Command collapse(vvHardwareITDPedro robot) { return new collapse(robot); }
 
     // Outtake Commands ---------------------------------------------------------------------------------------------------
 
-    // First stage outtake commands
-    public static Command RaiseSlidesForSampleDump(AutonomousRobot robot)  { return new RaiseSlidesForSampleDump(robot); }
-    public static Command RaiseSlidesForSpecimenDump(AutonomousRobot robot) { return new RaiseSlidesForSpecimenDump(robot); }
+    // Basket commands
+    public static Command rearBasket(vvHardwareITDPedro robot)  { return new rearBasket(robot); }
+    public static Command highChamber(vvHardwareITDPedro robot) { return new highChamber(robot); }
 
-    // Clip / dump commands, clip automatically lets go when reached to be idiot proof and not damage slides
-    public static Command DumpSample(AutonomousRobot robot) { return new DumpSample(robot); }
-    public static Command ClipSpecimen(AutonomousRobot robot) { return new ClipSpecimen(robot); }
+    // Clip / dump commands, clip automatically lets go when reached
+    public static Command wallPick(AvvHardwareITDPedro robot) { return new wallPick(robot); }
+    public static Command clipSpecimen(vvHardwareITDPedro robot) { return new clipSpecimen(robot); }
 }
