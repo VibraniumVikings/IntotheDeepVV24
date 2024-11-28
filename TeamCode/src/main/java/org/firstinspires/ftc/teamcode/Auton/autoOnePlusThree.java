@@ -22,7 +22,7 @@ public class autoOnePlusThree extends CommandOpMode {
     @Override
     public void initialize() {
         this.follower = new Follower(hardwareMap);
-        this.robot = new AutonomousRobot(telemetry, hardwareMap, follower);
+        this.robot = new vvHardwareITDPedro(telemetry, hardwareMap, follower);
         this.follower.setStartingPose(new Pose(0.0, 0.0, 0.0));
         this.chain = Paths.onePlusThree; // This is also a valid path for a simple sample run, just forwards then back
 
