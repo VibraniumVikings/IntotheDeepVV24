@@ -29,9 +29,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  * Start the robot with the right side on the X tile line against the wall-
  *
  */
-@Autonomous(name = "vvBasketPedro", group = "1 - Auton", preselectTeleOp="vvTeleOp")
+@Autonomous(name = "vvBasketPedro1", group = "1 - Auton", preselectTeleOp="vvTeleOp")
 
-public class vvBasketPedro extends OpMode {
+public class vvBasketPedro1 extends OpMode {
     private vvHardwareITDPedro robot;
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -139,42 +139,36 @@ public class vvBasketPedro extends OpMode {
                 robot.armPos(robot.armHighCa, robot.armEPower);
                 //robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
                 robot.moveWristHighCw();
-
-                if (pathTimer.getElapsedTime()>500) {
-                    setPathState(10);
-                }
+                
+                setPathState(10);
+                    
                 break;
 
             case 10: //high chamber specimen placement
+                if (pathTimer.getElapsedTime()>500) {
                 follower.followPath(fwdHighCmbr);
 
-                if (pathTimer.getElapsedTime()>1500) {
-                    setPathState(11);
+                setPathState(11);
                 }
 
                 break;
 
             case 11: // Yellow1
-                if (pathTimer.getElapsedTime() > 1000) {
+                if (follower.getPose().getY() > highchamber.getY()-1 && pathTimer.getElapsedTime() > 1000) {
                     robot.armPos(robot.armHighCa - 300, 0.4);
                     if (pathTimer.getElapsedTime() > 1500) {
                         robot.openClaw();
                     }
 
-                    //robot.extArmPos(50, robot.extArmEPower);
-                    if (pathTimer.getElapsedTime() > 1600) {
-                        follower.followPath(yellow1);
-                    }
+                    follower.followPath(yellow1);
 
-                    if (atPathEnd() && pathTimer.getElapsedTime()>2000) {
-                        setPathState(12);
-                    }
+                    setPathState(12);
                 }
 
                 break;
 
             case 12: //Yellow1pick
-                if (pathTimer.getElapsedTime() > 100) {
+                if (atParametricEnd() && pathTimer.getElapsedTime() > 100) {
                     robot.pickSample();
 
                     if (armSetDown() && pathTimer.getElapsedTime() > 1000) { // && pathTimer.getElapsedTime() > 2000
@@ -192,7 +186,7 @@ public class vvBasketPedro extends OpMode {
 
                     follower.followPath(yellow1drop);
 
-                    if (atPathEnd() && armSetUp()) {
+                    if (armSetUp()) { //atPathEnd() && 
                         robot.openClaw();
                         setPathState(14);
                     }
