@@ -128,16 +128,16 @@ public class vvNewArm extends LinearOpMode {
                 if (gamepad2.left_bumper)
                     robot.closeClaw();
 
-                /*if (gamepad2.x) { //Rear high basket drop
+                if (gamepad2.x) { //Rear high basket drop
                     robot.armPos(robot.armRearBa, robot.armEPower);
                     robot.extArmPos(robot.extArmHighBe, robot.extArmEPower);
                     robot.moveWristLowCW();
-                }*/
-                if (gamepad2.x) { //Chamber clip
+                }
+                /*if (gamepad2.x) { //Chamber clip
                     robot.armPos(robot.armHighCa-150, robot.armEPower);
                     sleep(350);
                     robot.openClaw();
-                }
+                }*/
                 if (gamepad2.y) { //Carry position
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(50, robot.extArmEPower);
