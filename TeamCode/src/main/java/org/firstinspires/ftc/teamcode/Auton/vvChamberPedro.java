@@ -161,7 +161,7 @@ public class vvChamberPedro extends OpMode {
 
             case 10: // sample1 path
                 if (pathTimer.getElapsedTime() > 1000) {
-                    follower.followPath(sample1);
+                    follower.followPath(sample1,/* holdEnd = */ true));
 
                     setPathState(11);
                 }
@@ -177,7 +177,7 @@ public class vvChamberPedro extends OpMode {
 
             case 12: // Sample 2 grab
                 if (pathTimer.getElapsedTime() > 1000) {
-                    follower.followPath(sample2);
+                    follower.followPath(sample2,/* holdEnd = */ true));
 
                     if (atPathEnd() && pathTimer.getElapsedTime() > 1000) { // && pathTimer.getElapsedTime() > 2000
                         robot.closeClaw();
@@ -191,7 +191,7 @@ public class vvChamberPedro extends OpMode {
                 if (pathTimer.getElapsedTime() > 1000) {
                     robot.wallPick();
 
-                    follower.followPath(sample2Drop);
+                    follower.followPath(sample2Drop,/* holdEnd = */ true));
 
                     if(isHalfwayThere()) {
                         robot.openClaw();
@@ -214,7 +214,7 @@ public class vvChamberPedro extends OpMode {
 
             case 141: // To Chamber placement
                 if (pathTimer.getElapsedTime() > 1000) {
-                    follower.followPath(samplePlace);
+                    follower.followPath(samplePlace,/* holdEnd = */ true));
 
                     setPathState(142);
                 }
@@ -248,7 +248,7 @@ public class vvChamberPedro extends OpMode {
 
             case 15: // Back to observation zone
                 if (pathTimer.getElapsedTime() > 1000) {
-                    follower.followPath(obsZone);
+                    follower.followPath(obsZone,/* holdEnd = */ true));
                     
                     robot.wallPick(); }
 
@@ -316,6 +316,7 @@ public class vvChamberPedro extends OpMode {
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.update();
     }
 
@@ -345,7 +346,7 @@ public class vvChamberPedro extends OpMode {
     public void setPathState(int state) {
         pathState = state;
         pathTimer.resetTimer();
-        autonPathUpdate();
+
     }
     @Override
     public void start() {
