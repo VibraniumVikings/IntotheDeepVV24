@@ -167,7 +167,7 @@ public class vvBasketPedro extends OpMode {
 
             case 7: //high chamber path
                 if (pathTimer.getElapsedTime() > 1500) {
-                    follower.followPath(fwdHighCmbr,/* holdEnd = */ true);
+                    follower.followPath(fwdHighCmbr);
 
                     setPathState(8);
                 }
