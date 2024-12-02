@@ -167,7 +167,7 @@ public class vvBasketPedro extends OpMode {
 
             case 7: //high chamber path
                 if (pathTimer.getElapsedTime() > 1500) {
-                    follower.followPath(fwdHighCmbr);
+                    follower.followPath(fwdHighCmbr,/* holdEnd = */ true);
 
                     setPathState(8);
                 }
@@ -192,7 +192,7 @@ public class vvBasketPedro extends OpMode {
 
             case 10: // yellow1 path
                 if (pathTimer.getElapsedTime() > 1000) {
-                    follower.followPath(yellow1);
+                    follower.followPath(yellow1,/* holdEnd = */ true);
 
                     setPathState(11);
                 }
@@ -218,7 +218,7 @@ public class vvBasketPedro extends OpMode {
             case 13: //Yellow1 drop position
                 if (pathTimer.getElapsedTime() > 500) {
                     robot.rearBasket();
-                    follower.followPath(yellow1drop);
+                    follower.followPath(yellow1drop,/* holdEnd = */ true);
                     setPathState(14);
                 }
 
@@ -235,7 +235,7 @@ public class vvBasketPedro extends OpMode {
                 if (pathTimer.getElapsedTime() > 1500)
                 //if (follower.getPose().getX() > (dropposition.getX() - 1) && follower.getPose().getY() > (dropposition.getY() - 1))
                     {
-                    follower.followPath(yellow2);
+                    follower.followPath(yellow2,/* holdEnd = */ true);
                     robot.pickSample();
 
                     setPathState(16);
@@ -254,7 +254,7 @@ public class vvBasketPedro extends OpMode {
             case 17: //Yellow2 drop position
                 if (pathTimer.getElapsedTime() > 1000) {
                     robot.rearBasket();
-                    follower.followPath(yellow2drop);
+                    follower.followPath(yellow2drop,/* holdEnd = */ true);
                     setPathState(18);
                 }
                 break;
@@ -272,7 +272,7 @@ public class vvBasketPedro extends OpMode {
                     //robot.armPos(robot.floorArm, robot.armEPower);
                     //robot.extArmPos(robot.extArmFLoorPick, robot.armEPower);
 
-                    follower.followPath(yellow3);
+                    follower.followPath(yellow3,/* holdEnd = */ true);
                     robot.openClaw();
 
                     setPathState(20);
@@ -291,7 +291,7 @@ public class vvBasketPedro extends OpMode {
             case 21: //Yellow3 drop position
                 if (pathTimer.getElapsedTime() > 1000) {
                     robot.rearBasket();
-                    follower.followPath(yellow3drop);
+                    follower.followPath(yellow3drop,/* holdEnd = */ true);
                     setPathState(22);
                 }
                     break;
@@ -313,7 +313,7 @@ public class vvBasketPedro extends OpMode {
                     robot.armPos(robot.armAscent, robot.armEPower);
                     robot.extArmPos(0, robot.extArmEPower);
 
-                    follower.followPath(ascent);
+                    follower.followPath(ascent,/* holdEnd = */ true);
                     setPathState(24);
                 }
                 break;
@@ -354,6 +354,7 @@ public class vvBasketPedro extends OpMode {
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.update();
     }
 
@@ -384,13 +385,14 @@ public class vvBasketPedro extends OpMode {
     public void setPathState (int state) {
         pathState = state;
         pathTimer.resetTimer();
-        autonPathUpdate();
+
     }
     @Override
     public void start() {
 
                 buildPaths();
 
+                opmodeTimer.resetTimer();
                 resetRuntime();
 
                 setPathState(6);
