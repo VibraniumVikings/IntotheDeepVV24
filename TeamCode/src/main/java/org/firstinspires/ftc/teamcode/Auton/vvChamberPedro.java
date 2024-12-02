@@ -77,38 +77,46 @@ public class vvChamberPedro extends OpMode {
 
     public void buildPaths() {
 
-        fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN), new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN))); //Tile Start Position
+        fwdHighCmbr = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN), 
+                                              new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN))); //Tile Start Position
         fwdHighCmbr.setConstantHeadingInterpolation(startPose.getHeading());
         fwdHighCmbr.setPathEndTimeoutConstraint(2);
 
         sample1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN), new Point(108, 16, Point.CARTESIAN), new Point(specimenMark1.getX()-9, specimenMark1.getY()+15, Point.CARTESIAN)))
+                .addPath(new BezierCurve(new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN), 
+                                         new Point(108, 16, Point.CARTESIAN), 
+                                         new Point(specimenMark1.getX()-9, specimenMark1.getY()+15, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
-                .addPath(new BezierLine(new Point(specimenMark1.getX()-9, specimenMark1.getY()+15, Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY()-botLength, Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(specimenMark1.getX()-9, specimenMark1.getY()+15, Point.CARTESIAN), 
+                                        new Point(observationZone.getX(),observationZone.getY()-botLength, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .setPathEndTimeoutConstraint(5)
                 .build();
 
         sample2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY()-botLength, Point.CARTESIAN), new Point(specimenMark2.getX(),specimenMark2.getY()-botPickup, Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY()-botLength, Point.CARTESIAN), 
+                                        new Point(specimenMark2.getX(),specimenMark2.getY()-botPickup, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .setPathEndTimeoutConstraint(2)
                 .build();
 
         sample2Drop = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenMark2.getX(),specimenMark2.getY()-botPickup, Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(specimenMark2.getX(),specimenMark2.getY()-botPickup, Point.CARTESIAN), 
+                                        new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(startPose.getHeading(),observationZone.getHeading(),0.5)
                 .setPathEndTimeoutConstraint(2)
                 .build();
 
         samplePlace = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN), 
+                                        new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(observationZone.getHeading(),startPose.getHeading(),0.5)
                 .setPathEndTimeoutConstraint(5)
                 .build();
 
         obsZone = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN), new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(highchamber.getX(), highchamber.getY(), Point.CARTESIAN), 
+                                        new Point(observationZone.getX(),observationZone.getY(), Point.CARTESIAN)))
                 .setLinearHeadingInterpolation(startPose.getHeading(),observationZone.getHeading(),0.5)
                 .setPathEndTimeoutConstraint(2)
                 .build();
@@ -116,56 +124,63 @@ public class vvChamberPedro extends OpMode {
 
         public void autonPathUpdate() {
         switch (pathState){
-            case 9: //move arm to position
-                robot.rgb.setPosition(0.5);
-                robot.armPos(robot.armHighCa, robot.armEPower);
-                //robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
-                robot.moveWristHighCw();
+            case 6: //move arm to position and high chamber specimen placment
+                if (follower.getPose().getY() > (startPose.getY() - 1)) {
+                    robot.rgb.setPosition(0.5);
+                    robot.armPos(robot.armHighCaNew, robot.armEPower);
+                    robot.moveWristHighCwNew();
+                    robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
+                    setPathState(7);
+                }
+                break;
 
-                if (pathTimer.getElapsedTime()>100) {
+            case 7: //high chamber path
+                if (pathTimer.getElapsedTime() > 1500) {
+                    follower.followPath(fwdHighCmbr);
+
+                    setPathState(8);
+                }
+                break;
+
+            case 8: // High chamber open claw
+                if (follower.getPose().getX() > (highchamber.getX() - 1) && follower.getPose().getY() > (highchamber.getY() - 1)) {
+                    robot.openClaw();
+                    //robot.moveWristFloor();
+
+                    setPathState(9);
+                }
+
+                break;
+            case 9: // High chamber retract arm
+                if (pathTimer.getElapsedTime() > 500) {
+                    robot.extArmPos(0, robot.extArmEPower);
+
                     setPathState(10);
                 }
                 break;
 
-            case 10: //high chamber specimen placement
-                follower.followPath(fwdHighCmbr);
+            case 10: // sample1 path
+                if (pathTimer.getElapsedTime() > 1000) {
+                    follower.followPath(sample1);
 
-                if (pathTimer.getElapsedTime()>1500) {
                     setPathState(11);
                 }
-
                 break;
 
-            case 11: // Sample clip and sample 1 push to obszone
+            case 11: // Ssample 1 push to obszone
                 if (pathTimer.getElapsedTime() > 1000) {
-                    robot.armPos(robot.armHighCa - 300, 0.4);
-                    if (pathTimer.getElapsedTime() > 1500) {
-                        robot.openClaw();
-                    }
-
-                    //robot.extArmPos(50, robot.extArmEPower);
-                    if (pathTimer.getElapsedTime() > 1600) {
-                        follower.followPath(sample1);
-                    }
-
-                    if (isHalfwayThere() && pathTimer.getElapsedTime() > 2500){
-                        robot.pickSample();
-                    }
-                    if (follower.atParametricEnd() && pathTimer.getElapsedTime()>5000) {
-                        setPathState(12);
-                    }
+                    robot.pickSample();
+                    setPathState(12);
                 }
 
                 break;
 
             case 12: // Sample 2 grab
-                if (pathTimer.getElapsedTime() > 100) {
+                if (pathTimer.getElapsedTime() > 1000) {
                     follower.followPath(sample2);
 
                     if (atPathEnd() && pathTimer.getElapsedTime() > 1000) { // && pathTimer.getElapsedTime() > 2000
                         robot.closeClaw();
-                    }
-                    if (atPathEnd() && pathTimer.getElapsedTime() > 2000) { // && pathTimer.getElapsedTime() > 2000
                         setPathState(13);
                     }
                 }
@@ -173,7 +188,7 @@ public class vvChamberPedro extends OpMode {
                 break;
 
             case 13: // Sample 2 drop
-                if (pathTimer.getElapsedTime() > 100) {
+                if (pathTimer.getElapsedTime() > 1000) {
                     robot.wallPick();
 
                     follower.followPath(sample2Drop);
@@ -190,40 +205,58 @@ public class vvChamberPedro extends OpMode {
                 break;
 
             case 14: // Specimen 1 grab and chamber placement
-                if (pathTimer.getElapsedTime() > 250) {
+                if (pathTimer.getElapsedTime() > 1000) {
                     robot.closeClaw();
 
-                    if (pathTimer.getElapsedTime() > 1000) {
-                        robot.armPos(robot.armHighCa, robot.armEPower);
-                        robot.moveWristHighCw();
-                        follower.followPath(samplePlace);
-                    }
-                    if (atPathEnd() && armSetUp() && pathTimer.getElapsedTime() > 2000) { //atPathEnd() && isAtEndOfPathAndNotMoving()
-                        setPathState(15);
-                    }
+                    setPathState(141);
                 }
                 break;
 
-            case 15: // Specimen 1 place
+            case 141: // To Chamber placement
                 if (pathTimer.getElapsedTime() > 1000) {
-                    robot.armPos(robot.armHighCa - 300, 0.4);
-                    if (pathTimer.getElapsedTime() > 1350) {
-                        robot.openClaw();
-                    }
+                    follower.followPath(samplePlace);
 
-                    if (pathTimer.getElapsedTime() > 1450) {
-                        follower.followPath(obsZone);
-                    }
-                    if (pathTimer.getElapsedTime() > 1600) {
-                        robot.wallPick(); }
+                    setPathState(142);
+                }
+                break;
+                        
+            case 142: // Arm to Chamber placement
+                if (pathTimer.getElapsedTime() > 500) {
+                    robot.armPos(robot.armHighCaNew, robot.armEPower);
+                    robot.moveWristHighCwNew();
+                    robot.extArmPos(robot.extArmHighCe, robot.extArmEPower);
 
-                    if (atPathEnd() && pathTimer.getElapsedTime() > 4000) { //atPathEnd() &&
-                        setPathState(16);
-                    }
+                    setPathState(143);
+                }
+                break;
+
+            case 143: // High chamber open claw
+                if (follower.getPose().getX() > (highchamber.getX() - 1) && follower.getPose().getY() > (highchamber.getY() - 1)) {
+                    robot.openClaw();
+
+                    setPathState(144);
                 }
 
                 break;
+            case 144: // High chamber retract arm
+                if (pathTimer.getElapsedTime() > 500) {
+                    robot.extArmPos(0, robot.extArmEPower);
 
+                    setPathState(15);
+                }
+                break;
+
+            case 15: // Back to observation zone
+                if (pathTimer.getElapsedTime() > 1000) {
+                    follower.followPath(obsZone);
+                    
+                    robot.wallPick(); }
+
+                    setPathState(16);
+                }
+
+                break;
+/*
             case 16: // Specimen 2 grab and chamber placement
                 if (pathTimer.getElapsedTime() > 250) {
                     robot.closeClaw();
