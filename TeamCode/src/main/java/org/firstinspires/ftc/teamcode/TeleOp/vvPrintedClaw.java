@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Core.vvHardwareITDClaw;
  */
 
 @TeleOp(name="vvPrintedClaw", group="1-TeleOp")
-
+@Disabled
 public class vvPrintedClaw extends LinearOpMode {
 
     //vvHardware class external pull
@@ -154,7 +155,7 @@ public class vvPrintedClaw extends LinearOpMode {
                 if (gamepad2.dpad_down) { //Near floor pick
                     robot.armPos(robot.floorArm, robot.armEPower);
                     robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
-                    robot.moveWristLowBw();
+                    robot.moveWristFloor();
                 }
                 if (gamepad2.dpad_right) { //Submersible pick
                     robot.armPos(robot.armFloorSub, robot.armEPower);

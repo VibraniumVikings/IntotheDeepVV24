@@ -73,7 +73,7 @@ public class vvHardwareITD {
     final public int floorArm = 0;// 0 for metal, ~50 for claw?
     final public int armLowCa = 550; //
     final public int armHighCa = 1250; //was 1200
-    final public int armHighCaNew = 1050;
+    final public int armHighCaNew = 1100; //prev 1050
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
     final public int armRearBa = 2600; //Max arm is 3747, 2560 is vertical
@@ -88,7 +88,7 @@ public class vvHardwareITD {
     final public int extArmHighCe = 600;
     final public int extArmLowCe = 50;
     final public int extArmFloorSub= 1450;
-    final public int extArmFLoorPick = 290; //Metal 290, 3D Print 400
+    final public int extArmFLoorPick = 270; //Metal 290, 3D Print 400
     final public double extArmEPower = 0.4;
 
     final public double liftEPower = 0.5;

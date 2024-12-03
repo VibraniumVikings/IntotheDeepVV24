@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Auton;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -30,7 +31,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  *
  */
 @Autonomous(name = "vvBasketPedro1", group = "1 - Auton", preselectTeleOp="vvTeleOp")
-
+@Disabled
 public class vvBasketPedro1 extends OpMode {
     private vvHardwareITDPedro robot;
 
@@ -46,7 +47,7 @@ public class vvBasketPedro1 extends OpMode {
 
     private int pathState;
 
-    // We want to start the bot at x: 14, y: -60, heading: 90 degrees (these are FIRST coordinates)
+    // We want to start the bot at x: 65, y: 7, heading: 90 degrees (these are FIRST coordinates)
     private Pose startPose = new Pose(65, 7, Math.toRadians(90));
     // all sample mark locations
     private Pose highchamber = new Pose(65,33.5);
@@ -168,7 +169,7 @@ public class vvBasketPedro1 extends OpMode {
                 break;
 
             case 12: //Yellow1pick
-                if (atParametricEnd() && pathTimer.getElapsedTime() > 100) {
+                if (pathTimer.getElapsedTime() > 100) { // atParametricEnd()
                     robot.pickSample();
 
                     if (armSetDown() && pathTimer.getElapsedTime() > 1000) { // && pathTimer.getElapsedTime() > 2000
