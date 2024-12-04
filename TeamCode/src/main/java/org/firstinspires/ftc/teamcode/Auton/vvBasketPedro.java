@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  * Start the robot with the right side on the X tile line against the wall-
  *
  */
-@Autonomous(name = "vvBasketPedro", group = "1 - Auton", preselectTeleOp="vvTeleOp")
+@Autonomous(name = "vvBasketPedro", group = "1 - Auton", preselectTeleOp="vvNewArm")
 
 public class vvBasketPedro extends OpMode {
     private vvHardwareITDPedro robot;
@@ -51,7 +51,7 @@ public class vvBasketPedro extends OpMode {
     // all sample mark locations
     private Pose highchamber = new Pose(67,36);
     private Pose sampleMark1 = new Pose(26,44);
-    private Pose sampleMark2 = new Pose(14,44);
+    private Pose sampleMark2 = new Pose(15,44);
     private Pose sampleMark3 = new Pose(4.5,57,Math.toRadians(180));
     private Pose dropposition = new Pose (18,21,Math.toRadians(45));
     private Pose dropposition2 = new Pose (15,21, Math.toRadians(60));

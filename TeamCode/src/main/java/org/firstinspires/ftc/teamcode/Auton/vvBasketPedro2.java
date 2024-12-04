@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Auton;
 //import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 //import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Core.vvHardwareITDPedro;
@@ -39,7 +40,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 	*/
 
 @Autonomous(name = "vvBasketPedro2", group = "1 - Auton", preselectTeleOp="vvTeleOp")
-
+@Disabled
 
 public class vvBasketPedro2 extends OpMode {
 
