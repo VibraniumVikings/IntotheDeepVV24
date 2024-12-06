@@ -50,7 +50,7 @@ import java.util.List;
  * Use the Dpad to determine the test case (Forward, Left & Spin, Right & Spin)
  */
 @Autonomous(name = "AutonMagnus", group = "Concept")
-
+@Disabled
 public class vvAutonMag extends LinearOpMode {
 
     vvHardwareMag robot = new vvHardwareMag(this);

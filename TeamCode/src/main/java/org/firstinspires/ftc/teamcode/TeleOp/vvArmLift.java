@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Core.vvHardwareITD;
  */
 
 @TeleOp(name="vvArmLift", group="2-TeleOp")
-
+@Disabled
 public class vvArmLift extends LinearOpMode {
 
     //vvHardware class external pull

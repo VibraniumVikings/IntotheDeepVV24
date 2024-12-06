@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.Core.vvHardwareMag;
  */
 
 @TeleOp(name="magFC", group="2-TeleOp")
-
+@Disabled
 public class magFC extends LinearOpMode {
 
     //vvHardware class external pull

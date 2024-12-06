@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Auton;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,7 +27,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  * Start the robot left side on the x tile line against the wall
  */
 @Autonomous(name = "vvChamberPedro1", group = "2 - Auton", preselectTeleOp="vvTeleOp")
-
+@Disabled
 public class vvChamberPedro1 extends OpMode {
     private vvHardwareITDPedro robot;
 
