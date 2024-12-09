@@ -19,7 +19,7 @@ import java.util.List;
  * Pipeline 2 is Color detection
  */
 @TeleOp(name = "LimeAprilTag", group = "Sensor")
-
+@Disabled
 public class vvLimeLight extends LinearOpMode {
 
     private Limelight3A limelight;

@@ -31,7 +31,7 @@ import java.util.List;
  * https://ftc-docs.firstinspires.org/apriltag-detection-values
  */
 @TeleOp(name = "CoachAprilTag", group = "Concept")
-
+@Disabled
 public class coachAprilTag extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera

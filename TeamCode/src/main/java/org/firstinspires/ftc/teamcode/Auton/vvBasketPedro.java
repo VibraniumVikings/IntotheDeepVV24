@@ -52,14 +52,14 @@ public class vvBasketPedro extends OpMode {
     private Pose highchamber = new Pose(67,36);
     private Pose sampleMark1 = new Pose(26,44);
     private Pose sampleMark2 = new Pose(14,45);
-    private Pose sampleMark3 = new Pose(4.5,57,Math.toRadians(180));
+    private Pose sampleMark3 = new Pose(6,57,Math.toRadians(180));
     private Pose dropposition = new Pose (18,21,Math.toRadians(45));
     private Pose dropposition2 = new Pose (15,21, Math.toRadians(60));
 
     private Pose specimenMark1 = new Pose(121.5, 43);
     private Pose specimenMark2 = new Pose(131.5, 43);
     private Pose specimenMark3 = new Pose(141.5, 43,Math.toRadians(1));
-    private Pose ascentPose  = new Pose(60,81, Math.toRadians(5));
+    private Pose ascentPose  = new Pose(48,66, Math.toRadians(5));
     //Kraken dimensional offsets
     public double botWidth = 7;
     public double botLength = 7;

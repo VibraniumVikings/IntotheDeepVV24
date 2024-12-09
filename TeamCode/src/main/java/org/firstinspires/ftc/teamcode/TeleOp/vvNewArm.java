@@ -78,26 +78,26 @@ public class vvNewArm extends LinearOpMode {
                 }
 
                 if (gamepad1.dpad_left) { //arm ascent grab
-                    robot.extArmPos(robot.extArmAscentGrab,robot.extArmEPower);
-                    robot.armPos(robot.armAscent, robot.armEPower);
-                    robot.moveWristCarry();
+                    //robot.extArmPos(robot.extArmAscentGrab,robot.extArmEPower);
+                    //robot.armPos(robot.armAscent, robot.armEPower);
+                    //robot.moveWristCarry();
                 }
                 if (gamepad1.dpad_right) { //arm ascent lift
-                    robot.extArmPos(robot.extArmAscentLift,robot.extArmEPower+0.3);
-                    robot.armPos(robot.armAscent, robot.armEPower);
-                    robot.moveWristFloor();
+                    //robot.extArmPos(robot.extArmAscentLift,robot.extArmEPower+0.3);
+                    //robot.armPos(robot.armAscent, robot.armEPower);
+                    //robot.moveWristFloor();
                 }
                 if (gamepad1.dpad_up) { //lift to grab position
                     robot.liftUp();
-                    //robot.armPos(robot.armLowCa, robot.armEPower);
-                    //robot.extArmPos(robot.extArmLowCe, robot.extArmEPower);
-                    //robot.moveWristLowCW();
+                    robot.armPos(robot.armLowCa, robot.armEPower);
+                    robot.extArmPos(robot.extArmLowCe, robot.extArmEPower);
+                    robot.moveWristLowCW();
                 }
                 if (gamepad1.dpad_down) { //lift to down position, for robot lift
                     robot.liftDown();
-                    //robot.armPos(robot.floorArm, robot.armEPower);
-                    //robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
-                    //robot.moveWristFloor();
+                    robot.armPos(robot.floorArm, robot.armEPower);
+                    robot.extArmPos(robot.extArmFLoorPick,robot.extArmEPower);
+                    robot.moveWristFloor();
                 }
                 if (gamepad1.x) { //wrist drop
                     robot.moveWristFloor();

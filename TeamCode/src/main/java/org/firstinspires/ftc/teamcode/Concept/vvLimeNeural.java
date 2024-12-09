@@ -4,6 +4,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,7 +20,7 @@ import java.util.List;
  * Pipeline 2 is Color detection
  */
 @TeleOp(name = "LimeNeural", group = "Sensor")
-
+@Disabled
 public class vvLimeNeural extends LinearOpMode {
 
     private Limelight3A limelight;

@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 //import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -30,7 +31,7 @@ import java.util.Objects;
  *
  */
 @Autonomous(name = "vvHighBskt", group = "3 - Auton", preselectTeleOp="vvTeleOp")
-
+@Disabled
 public class  vvHighBskt extends LinearOpMode {
     vvHardwareITDRR robot = new vvHardwareITDRR(this);
 

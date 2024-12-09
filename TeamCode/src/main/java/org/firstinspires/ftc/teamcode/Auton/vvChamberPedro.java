@@ -59,16 +59,16 @@ public class vvChamberPedro extends OpMode {
     private Pose sub1Cntrl2 = new Pose(115, 138);
 
     private Pose spec1Cntrl = new Pose(126, 72);
-    private Pose obsZone1 = new Pose(120, 18, Math.toRadians(90));
+    private Pose obsZone1 = new Pose(120, 17.5, Math.toRadians(90));
     private Pose spec2 = new Pose(126, 60);
     private Pose spec2Cntrl1 = new Pose(96, 48);
     private Pose spec2Cntrl2 = new Pose(136, 105);
-    private Pose obsZone2 = new Pose(130, 18, Math.toRadians(90));
+    private Pose obsZone2 = new Pose(130, 17.5, Math.toRadians(90));
     private Pose turn = new Pose(115, 32, Math.toRadians(-91));
 
     private Pose spec3 = new Pose(115, 45, Math.toRadians(1));
     private Pose spec3Cntrl = new Pose(91, 47);
-    private Pose obsZone3 = new Pose(100, 25, Math.toRadians(-91));
+    private Pose obsZone3 = new Pose(101, 23.5, Math.toRadians(-91));
     private Pose obsCntrl = new Pose(60, 16);
     private Pose obsInt = new Pose(72, 28,Math.toRadians(45));
     private Pose chmbrCntrl = new Pose(72, 0);
@@ -82,7 +82,7 @@ public class vvChamberPedro extends OpMode {
     private Pose specimenMark2Control = new Pose (114,60);
     private Pose specimenMark21Control = new Pose (148,72); //118,60
     private Pose obsControl= new Pose(106,48, Math.toRadians(-90)); //spin around point
-    private Pose observationZone= new Pose(110,10, Math.toRadians(-89));
+    private Pose observationZone= new Pose(101,23, Math.toRadians(-91));
 
     //Kraken dimensional offsets
     public double botWidth = 7;
@@ -355,7 +355,7 @@ public class vvChamberPedro extends OpMode {
                 break;
 
             case 134: // To observation zone and grab spec
-                if (follower.getPose().getX() > (obsZone3.getX()-0.25) && follower.getPose().getY() < (obsZone3.getY() + 0.25) && pathTimer.getElapsedTime() > 2000) {
+                if (follower.getPose().getX() > (obsZone3.getX()-0.5) && follower.getPose().getY() < (obsZone3.getY() + 0.5) && pathTimer.getElapsedTime() > 2000) {
                     robot.closeClaw();
 
                     setPathState(135);
@@ -417,7 +417,7 @@ public class vvChamberPedro extends OpMode {
                 break;
 
             case 16: // To observation zone and drop spec3
-                if (follower.getPose().getX() > (obsZone3.getX()-0.25) && follower.getPose().getY() < (obsZone3.getY()+0.25) && pathTimer.getElapsedTime() > 2000) {
+                if (follower.getPose().getX() > (obsZone3.getX()-0.5) && follower.getPose().getY() < (obsZone3.getY()+0.5) && pathTimer.getElapsedTime() > 2000) {
                     robot.closeClaw();
 
                     setPathState(165);

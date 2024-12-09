@@ -66,19 +66,19 @@ public class vvHardwareITD {
     public static final double highCw  = 0.3 ;
     public static final double highCwNew  = 0.55 ;
     public static final double lowCW = 0.5 ;
-    public static final double highBw = 0.2 ;
+    public static final double highBw = 0.15 ;
     public static final double lowBw = 0.3 ;
     public static final double lowWallCw = 0.4 ;
 
     final public int floorArm = 0;// 0 for metal, ~50 for claw?
     final public int armLowCa = 550; //
     final public int armHighCa = 1250; //was 1200
-    final public int armHighCaNew = 1100; //prev 1050
+    final public int armHighCaNew = 1075; //prev 1050
     final public int armLowBa = 1450;
     final public int armHighBa = 2159;
     final public int armRearBa = 2600; //Max arm is 3747, 2560 is vertical
     final public int armFloorSub = 400; // 400 for metal, ~200 for claw?
-    final public int armWall = 300; //300 Competition 375 Practice
+    final public int armWall = 375; //300 Competition 375 Practice
     final public int armAscent = 1500;
     final public double armEPower = 0.5;
     final public int extArmAscentGrab = 1450; //20" high is 1450

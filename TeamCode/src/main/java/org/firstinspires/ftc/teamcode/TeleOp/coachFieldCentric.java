@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.Core.vvHardware;
  */
 
 @TeleOp(name="coachFC", group="2-TeleOp")
-
+@Disabled
 public class coachFieldCentric extends LinearOpMode {
 
     //vvHardware class external pull

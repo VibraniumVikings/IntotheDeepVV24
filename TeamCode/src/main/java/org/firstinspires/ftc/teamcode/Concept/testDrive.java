@@ -49,7 +49,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  */
 
 @TeleOp(name="testDrive", group="teleOp")
-
+@Disabled
 public class testDrive extends LinearOpMode {
 
     /* Declare OpMode members. */

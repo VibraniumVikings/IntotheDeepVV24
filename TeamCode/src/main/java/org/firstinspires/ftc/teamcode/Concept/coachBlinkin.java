@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
  * Displays the first pattern upon init.
  */
 @TeleOp(name="coachBlinkinEx", group="Concept")
-
+@Disabled
 public class coachBlinkin extends OpMode {
 
     /*
